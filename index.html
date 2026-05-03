@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇳🇴 Norvège 2026 — Julien & Marion</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--ink:#12202c;--fjord:#1e4a5f;--teal:#3ab5be;--aurora:#5ecb8f;--amber:#e8924a;--red:#d94f4f;--stone:#6b8394;--mist:#e8f4f8;--paper:#f8f5f0;--white:#fff;--border:rgba(30,74,95,.12);--r:12px;--r-sm:8px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;padding-bottom:60px}
+nav{position:sticky;top:0;z-index:1000;background:var(--fjord);display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;box-shadow:0 2px 12px rgba(0,0,0,.25);padding:0 8px}
+nav::-webkit-scrollbar{display:none}
+nav a{flex-shrink:0;display:inline-flex;align-items:center;padding:13px 14px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;font-weight:500;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+nav a:hover{color:#fff}
+nav a.active{color:#fff;border-bottom-color:var(--teal)}
+.hero{background:linear-gradient(160deg,#0d2535 0%,#1e4a5f 50%,#0d2a1a 100%);color:#fff;padding:40px 20px 48px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 60% at 10% 80%,rgba(62,181,190,.12) 0%,transparent 60%),radial-gradient(ellipse 80% 50% at 90% 20%,rgba(94,203,143,.08) 0%,transparent 60%);pointer-events:none}
+.hero>*{position:relative}
+.hero-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:12px}
+.hero h1{font-family:'Fraunces',serif;font-size:42px;font-weight:700;line-height:1.05;margin-bottom:6px}
+.hero h1 em{font-style:italic;color:var(--teal)}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:28px}
+.hero-pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 14px;font-size:12px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:5px}
+.pill strong{color:#fff;font-weight:500}
+section{padding:28px 16px;max-width:640px;margin:0 auto}
+section+section{border-top:1px solid var(--border)}
+.section-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:block}
+.section-title{font-family:'Fraunces',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:20px}
+.sep{width:40px;height:3px;background:var(--teal);border-radius:2px;margin:0 0 20px}
+#map{width:100%;height:420px;border-radius:var(--r);border:1px solid var(--border);background:#d4e8ef;margin-bottom:0}
+.map-leg{background:var(--white);padding:12px 16px;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--stone)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.week{background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.week-head{padding:16px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;user-select:none;background:linear-gradient(135deg,var(--fjord) 0%,#1a3a50 100%)}
+.week-num{font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:rgba(255,255,255,.2);line-height:1;min-width:44px}
+.week-info{flex:1}
+.week-name{font-family:'Fraunces',serif;font-size:17px;color:#fff;font-weight:700}
+.week-dates{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:2px}
+.week-km{text-align:right;flex-shrink:0}
+.week-km-val{font-family:'Fraunces',serif;font-size:18px;color:var(--amber);font-weight:700}
+.week-km-lbl{font-size:10px;color:rgba(255,255,255,.4)}
+.week-body{display:none}
+.week-body.open{display:block}
+.chevron{font-size:11px;color:rgba(255,255,255,.4);transition:transform .3s;flex-shrink:0;margin-top:8px}
+.chevron.open{transform:rotate(180deg)}
+.day{padding:14px 16px;border-bottom:1px solid var(--border);background:var(--white)}
+.day:last-child{border-bottom:none}
+.day-top{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.day-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--stone);letter-spacing:1px;min-width:72px;padding-top:3px;flex-shrink:0}
+.day-title{font-size:14px;font-weight:500;color:var(--ink);line-height:1.3;flex:1}
+.day-badges{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 8px 82px}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-family:'DM Mono',monospace}
+.b-drive{background:#fff3e6;color:#c07020}.b-hike{background:#e6f7ee;color:#2a7a4f}.b-ferry{background:#fce8e8;color:#b03030}.b-camp{background:#e8f4f8;color:#1e6080}.b-wash{background:#f0eef8;color:#5040a0}.b-sport-j{background:#fff8e6;color:#a06020}.b-sport-m{background:#fdf0f8;color:#803060}.b-kids{background:#e8fdf4;color:#1a7060}.b-city{background:#f4f0fc;color:#4030a0}
+.activity{background:var(--mist);border-radius:var(--r-sm);padding:12px 14px;margin:6px 0 0 82px;border-left:3px solid var(--teal)}
+.activity.am{border-left-color:var(--amber)}.activity.au{border-left-color:var(--aurora)}.activity.re{border-left-color:var(--red)}
+.act-name{font-size:13px;font-weight:500;color:var(--fjord);margin-bottom:4px}
+.act-desc{font-size:12px;color:var(--stone);line-height:1.5}
+.stats{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-family:'DM Mono',monospace;font-size:10px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--fjord)}
+.chip.eu{color:#1a7060;background:#e8fdf4;border-color:rgba(94,203,143,.3)}
+.activity a{display:inline-block;margin-top:8px;font-size:11px;color:var(--teal);text-decoration:none;font-family:'DM Mono',monospace;border-bottom:1px solid rgba(58,181,190,.4)}
+.note{background:var(--mist);border-radius:var(--r-sm);padding:11px 13px;margin:8px 0 0 82px;border-left:3px solid var(--teal);font-size:12px;color:var(--stone);line-height:1.5}
+.note strong{color:var(--fjord)}.note a{color:var(--teal);font-size:11px}
+.note.am{border-left-color:var(--amber);background:#fff8f0}.note.re{border-left-color:var(--red);background:#fff5f5}.note.au{border-left-color:var(--aurora);background:#f0fbf5}
+.note.full{margin-left:0}
+.icard{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.icard-head{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.iicon{font-size:24px;flex-shrink:0}
+.icard h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--fjord)}
+.icard p,.icard li{font-size:13px;color:var(--stone);line-height:1.6}
+.icard ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px}
+.icard li{display:flex;gap:8px;align-items:flex-start}
+.icard li::before{content:'→';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
+.icard li strong{color:var(--ink)}
+.pcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.phead{background:linear-gradient(135deg,#fef3e6,#fde8cc);padding:12px 16px;display:flex;gap:10px;align-items:center}
+.phead h4{font-size:14px;font-weight:600;color:#8a4010}
+.pbody{padding:14px 16px}
+.pbody p{font-size:13px;color:var(--stone);margin-bottom:8px}
+.sol{background:var(--mist);border-radius:var(--r-sm);padding:10px 12px;border-left:3px solid var(--aurora)}
+.sol strong{font-size:11px;color:var(--aurora);display:block;margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.sol p{font-size:12px;color:var(--stone);line-height:1.6}
+.sol a{color:var(--teal);font-size:12px}
+.brow{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);gap:10px}
+.brow:last-child{border-bottom:none}
+.blbl{font-size:13px;color:var(--stone);flex:1}
+.blbl small{display:block;font-size:11px;color:#aab;margin-top:1px}
+.bamt{font-family:'DM Mono',monospace;font-size:13px;color:var(--fjord);font-weight:500;text-align:right;white-space:nowrap}
+.btot .blbl{color:var(--fjord);font-weight:600}
+.btot .bamt{color:var(--teal);font-size:16px;font-weight:700}
+.rchip{display:inline-block;background:var(--mist);border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 10px;font-size:12px;color:var(--fjord);margin:3px}
+footer{background:var(--fjord);color:rgba(255,255,255,.4);padding:24px 20px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:40px}
+@media(max-width:400px){.hero h1{font-size:34px}.day-badges,.activity,.note{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#carte">🗺️ Carte</a>
+  <a href="#planning">📅 Planning</a>
+  <a href="#pratique">🔧 Van & Tech</a>
+  <a href="#nourriture">🥦 Alimentation</a>
+  <a href="#budget">💶 Budget</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">✦ Roadtrip · Été 2026</div>
+  <h1>Norvège<br><em>en famille</em></h1>
+  <p class="hero-sub">VW California T5 · Julien + Marion + 2 enfants · 18 juillet → 26 août</p>
+  <div class="hero-pills">
+    <div class="pill"><strong>42</strong> jours</div>
+    <div class="pill"><strong>~7 500</strong> km</div>
+    <div class="pill"><strong>≤5h</strong> route/jour</div>
+    <div class="pill"><strong>6</strong> nuits camping</div>
+    <div class="pill"><strong>Bivouac</strong> sauvage</div>
+  </div>
+</div>
+
+<section id="carte">
+  <span class="section-tag">Itinéraire complet</span>
+  <h2 class="section-title">La boucle norvégienne</h2>
+  <div class="sep"></div>
+  <div id="map"></div>
+  <div class="map-leg">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--teal)"></div>Étapes</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Ferries</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Randonnées</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--aurora)"></div>UNESCO</div>
+  </div>
+  <div class="note full au">🗺️ <strong>Boucle :</strong> Aller côte ouest (fjords) · Retour côte est (Suède). Ferry Kiel→Oslo aller, Göteborg→Kiel retour.</div>
+  <div class="icard" style="margin-top:16px">
+    <div class="icard-head"><div class="iicon">📍</div><h3>Les 12 étapes clés</h3></div>
+    <ul>
+      <li><strong>Gardanne → Kiel</strong> — 3 jours, pauses Colmar + Forêt Noire</li>
+      <li><strong>Kiel → Oslo</strong> — Ferry Color Line (~20h, cabine famille)</li>
+      <li><strong>Oslo → Kristiansand</strong> — Dyrepark, plages Skagerrak</li>
+      <li><strong>Jæren → Stavanger</strong> — Dunes sauvages, vieux Stavanger, musée pétrole</li>
+      <li><strong>Preikestolen + Lysefjord</strong> — Rando 7,6 km / ferry Lysebotn</li>
+      <li><strong>Hardangerfjord · Odda</strong> — Låtefoss, Trolltunga (Julien), Lofthus (Marion)</li>
+      <li><strong>Bergen</strong> — Bryggen UNESCO, Fløibanen · 1–2 nuits hôtel</li>
+      <li><strong>Nærøyfjord · Flåm</strong> — Ferry fjord UNESCO + Flåmsbana</li>
+      <li><strong>Sognefjellet · Nigardsbreen</strong> — Route des neiges, glacier famille</li>
+      <li><strong>Ålesund · Route Atlantique · Trollstigen</strong> — Aquarium, routes mythiques</li>
+      <li><strong>Geirangerfjord · Dovrefjell</strong> — UNESCO, muscs sauvages, Snøhetta</li>
+      <li><strong>Lillehammer → Göteborg → Kiel</strong> — JO, Liseberg, ferry retour</li>
+    </ul>
+  </div>
+</section>
+
+<section id="planning">
+  <span class="section-tag">Planning semaine par semaine</span>
+  <h2 class="section-title">6 semaines, jour par jour</h2>
+  <div class="sep"></div>
+  <div class="note full am">🌦️ <strong>Principe météo :</strong> Les jours 🧺 sont des <em>jokers flexibles</em> — on les place les jours de pluie. Si la semaine est belle, on les glisse en fin de semaine.</div>
+  <div class="note full" style="margin-top:8px">🟡 = Julien trail solo · 🩷 = Marion rando solo · Enfants répartis 1 adulte / 1 enfant · max 2×/semaine.</div>
+
+  <!-- S0 -->
+  <div class="week" style="margin-top:20px">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">0</div>
+      <div class="week-info"><div class="week-name">Transit — Gardanne → Oslo</div><div class="week-dates">18 – 21 JUILLET</div></div>
+      <div class="week-km"><div class="week-km-val">1 350 km</div><div class="week-km-lbl">route + ferry</div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J1 · Dim 18/07</div><div class="day-title">Gardanne → Alsace · ~400 km · 4h30</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route</span><span class="badge b-hike">Pause visite</span></div>
+        <div class="activity"><div class="act-name">🎡 Pause : Colmar (Alsace)</div><div class="act-desc">Petite Venise, maisons à colombages, quartier des tanneurs. 1h30 de balade pour décompresser avant la grande route.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">1h30</span></div><a href="https://www.tourisme-colmar.com" target="_blank">→ tourisme-colmar.com</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J2 · Lun 19/07</div><div class="day-title">Alsace → Hamburg · ~700 km · 6h30 (2 conducteurs)</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route</span><span class="badge b-hike">Pause lac</span></div>
+        <div class="activity"><div class="act-name">🌲 Pause déjeuner : Lac Titisee — Forêt Noire</div><div class="act-desc">Lac de montagne, plage, baignade possible en juillet. Idéal pour les enfants après 3h de route.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">1h stop</span></div><a href="https://www.titisee.de" target="_blank">→ titisee.de</a></div>
+        <div class="note am">⚠️ Journée longue : alterner conducteurs toutes les 2h. Pas de vignette autoroute requise pour véhicule étranger en Allemagne.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J3 · Mar 20/07</div><div class="day-title">Hamburg → Kiel · embarquement ferry 14h</div></div>
+        <div class="day-badges"><span class="badge b-drive">~100 km</span><span class="badge b-ferry">Ferry nuit Color Line</span></div>
+        <div class="activity re"><div class="act-name">⛴️ Ferry Kiel → Oslo · Color Line · ~20h</div><div class="act-desc">Cabine famille obligatoire avec 2 enfants. Départ ~14h, arrivée Oslo ~9h30. Apporter à manger — buffet à bord très cher.</div><div class="stats"><span class="chip">~20h traversée</span><span class="chip eu">Cabine famille ~250–400€</span></div><a href="https://www.colorline.com" target="_blank">→ colorline.com — RÉSERVER MAINTENANT 🔴</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J4 · Mer 21/07</div><div class="day-title">Arrivée Oslo · demi-journée</div></div>
+        <div class="day-badges"><span class="badge b-city">Oslo</span><span class="badge b-kids">Enfants</span></div>
+        <div class="activity au"><div class="act-name">🗿 Vigeland Sculpture Park (Frognerparken)</div><div class="act-desc">212 sculptures géantes dans un grand parc vert. Les enfants adorent explorer les géants en bronze et granit. Puis balade Aker Brygge (bord de l'eau). Départ vers le sud l'après-midi.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">2h</span></div><a href="https://www.vigeland.museum.no" target="_blank">→ vigeland.museum.no</a></div>
+        <div class="note">Pas d'hébergement Oslo — bivouac dans la nature au sud d'Oslo le soir.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S1 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">1</div>
+      <div class="week-info"><div class="week-name">Côte sud & Stavanger (Sørlandet)</div><div class="week-dates">22 – 28 JUILLET</div></div>
+      <div class="week-km"><div class="week-km-val">~600 km</div><div class="week-km-lbl">Norvège</div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J5 · Jeu 22/07</div><div class="day-title">Oslo → Kristiansand · 280 km · 3h30</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route</span><span class="badge b-kids">Dyrepark</span></div>
+        <div class="activity au"><div class="act-name">🦁 Dyrepark Kristiansand — incontournable enfants</div><div class="act-desc">L'un des meilleurs parcs animaliers de Scandinavie. Tigres, gorilles, jeux aquatiques, animaux nordiques. Journée entière. Réserver en ligne : moins cher.</div><div class="stats"><span class="chip">~400 NOK/adulte</span><span class="chip eu">~35€/adulte</span><span class="chip">~250 NOK/enfant</span><span class="chip eu">~22€/enfant</span><span class="chip">Journée</span></div><a href="https://www.dyreparken.no" target="_blank">→ dyreparken.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J6 · Ven 23/07</div><div class="day-title">Kristiansand → Jæren · plages sauvages · 160 km</div></div>
+        <div class="day-badges"><span class="badge b-hike">Nature</span><span class="badge b-camp">Bivouac dunes</span></div>
+        <div class="activity"><div class="act-name">🏖️ Plages de Jæren (Jærstrendene)</div><div class="act-desc">Site naturel protégé Ramsar. Dunes sauvages, sable blanc, vagues douces, torrents côtiers. Bivouac légal sur les dunes. Eau fraîche mais baignade possible en juillet.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">Journée</span></div><a href="https://www.visitnorway.com/places-to-go/fjord-norway/jaeren/" target="_blank">→ visitnorway.com/jaeren</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J7 · Sam 24/07</div><div class="day-title">🧺 Jour lessive — Camping Orre ou Hellestø</div></div>
+        <div class="day-badges"><span class="badge b-wash">Lessive</span><span class="badge b-camp">Camping</span></div>
+        <div class="note full">Camping Orre Strand — machines (~60 NOK / <strong>~5€</strong>/cycle), douches chaudes, épicerie. Joker météo de la semaine.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J8 · Dim 25/07</div><div class="day-title">Jæren → Stavanger · 65 km · ville & musée</div></div>
+        <div class="day-badges"><span class="badge b-city">Vieux Stavanger</span><span class="badge b-kids">Musée pétrole</span></div>
+        <div class="activity au"><div class="act-name">🛢️ Norsk Oljemuseum — Musée du Pétrole</div><div class="act-desc">Musée interactif sur l'industrie pétrolière. Simulateurs, maquettes, histoire. Excellent pour le 7 ans. Gamle Stavanger (vieux quartier maisons blanches) à côté, gratuit.</div><div class="stats"><span class="chip">170 NOK/adulte</span><span class="chip eu">~15€/adulte</span><span class="chip">Gratuit -4 ans</span><span class="chip">2–3h</span></div><a href="https://www.norskolje.museum.no" target="_blank">→ norskolje.museum.no</a></div>
+        <div class="note am">Stavanger = péage urbain automatique ~35 NOK / <strong>~3€</strong>/passage. Badge AutoPass recommandé.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J9–10 · Lun–Mar</div><div class="day-title">Preikestolen (Pulpit Rock) 🏔️</div></div>
+        <div class="day-badges"><span class="badge b-hike">Rando famille</span><span class="badge b-sport-j">🟡 Trail Julien J10</span></div>
+        <div class="activity"><div class="act-name">⛰️ Randonnée Preikestolen — 604m sur le Lysefjord</div><div class="act-desc">Trail balisé cairns rouges "T". Terrain varié : marécages sur passerelles bois, forêt, escaliers taillés par des Sherpas népalais, dalles rocheuses. <strong>Porte-bébé dorsal obligatoire pour le 3 ans</strong> — pas de rambarde au sommet.</div><div class="stats"><span class="chip">7,6 km AR</span><span class="chip">+334 m D+</span><span class="chip">4–5h famille</span><span class="chip">200 NOK parking</span><span class="chip eu">~18€</span></div><a href="https://preikestolen365.com" target="_blank">→ preikestolen365.com (officiel)</a></div>
+        <div class="note am">⚠️ Arriver <strong>avant 8h</strong> — parking complet à 9h en juillet. Bivouaquer la veille sur place (légal).</div>
+        <div class="note au" style="margin-top:6px">🟡 <strong>Julien (J10) :</strong> Trail Kjeragbolten depuis Øygardstøl — 12 km AR, +630 m, ~6h. Marion + enfants au bivouac bord fjord. <a href="https://ut.no/tur/2936611" target="_blank">→ Fiche Kjerag ut.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J11 · Mer 28/07</div><div class="day-title">Ferry Stavanger → Lysebotn 🛳️ · 3h Lysefjord</div></div>
+        <div class="day-badges"><span class="badge b-ferry">Ferry 3h</span><span class="badge b-hike">Lysefjord</span></div>
+        <div class="activity re"><div class="act-name">⛴️ Ferry Fjord1 — Stavanger → Lysebotn</div><div class="act-desc">3h dans le Lysefjord avec vue sur Preikestolen depuis le bas (saisissant). Puis route panoramique Lysevegen en lacets pour remonter le plateau. Cascades, moutons, vue fjord.</div><div class="stats"><span class="chip">~3h navigation</span><span class="chip">800–1000 NOK van+4</span><span class="chip eu">~70–90€</span></div><a href="https://www.fjord1.no" target="_blank">→ fjord1.no — réserver le van à l'avance</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">2</div>
+      <div class="week-info"><div class="week-name">Hardangerfjord & Bergen</div><div class="week-dates">29 JUILLET – 4 AOÛT</div></div>
+      <div class="week-km"><div class="week-km-val">~500 km</div><div class="week-km-lbl"></div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J12–13 · Jeu–Ven</div><div class="day-title">Route vers Hardangerfjord · Cascades · Odda</div></div>
+        <div class="day-badges"><span class="badge b-drive">~250 km</span><span class="badge b-hike">Cascades</span><span class="badge b-kids">Torrent</span></div>
+        <div class="activity"><div class="act-name">💧 Cascade Låtefoss + vergers de Lofthus</div><div class="act-desc">Låtefoss : double cascade tombant sous le pont routier — on passe dessous en voiture, spectaculaire et gratuit. Lofthus : vergers de cerisiers sur le fjord, cerises en juillet, vue paradisiaque.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">1h30 arrêts</span></div><a href="https://www.visitnorway.com/places-to-go/fjord-norway/hardangerfjord/" target="_blank">→ visitnorway.com/hardangerfjord</a></div>
+        <div class="note au">🩷 <strong>Marion :</strong> Sentier des vergers Lofthus — 6 km plat le long du fjord, panorama Hardangerfjord. Julien + enfants au bord de l'eau. <a href="https://ut.no" target="_blank">→ ut.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J14 · Sam 01/08</div><div class="day-title">🧺 Jour lessive — Camping Odda</div></div>
+        <div class="day-badges"><span class="badge b-wash">Lessive</span><span class="badge b-camp">Camping</span></div>
+        <div class="note full">Camping Odda (Hardangerfjord). Machines ~60 NOK / <strong>~5€</strong>, douches, vue fjord.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J15 · Dim 02/08</div><div class="day-title">Trolltunga 🏔️ — Julien+7ans / Marion+3ans séparés</div></div>
+        <div class="day-badges"><span class="badge b-sport-j">🟡 Julien + grande</span><span class="badge b-sport-m">🩷 Marion + petit</span></div>
+        <div class="activity"><div class="act-name">🪨 Trolltunga — La Langue du Troll</div><div class="act-desc"><strong>🟡 Julien + 7 ans :</strong> Départ 6h depuis Skjeggedal P2, chemin bien balisé. Encas, eau, couche chaude obligatoires. <strong>🩷 Marion + 3 ans :</strong> Balade lac Ringedalsvatnet — 6 km plat, vue spectaculaire.</div><div class="stats"><span class="chip">28 km AR · +1 100 m D+</span><span class="chip">10–12h Julien</span><span class="chip">600 NOK parking</span><span class="chip eu">~55€</span></div><a href="https://www.trolltunga.com" target="_blank">→ trolltunga.com (officiel)</a></div>
+        <div class="note re">⚠️ Départ AVANT 7h obligatoire. Météo capricieuse au sommet — veste imperméable même si soleil au départ.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J16–17 · Lun–Mar</div><div class="day-title">Bergen (Bjørgvin) · 2 nuits hébergement 🏨</div></div>
+        <div class="day-badges"><span class="badge b-city">Bergen UNESCO</span><span class="badge b-kids">Funiculaire</span></div>
+        <div class="activity au"><div class="act-name">🏘️ Bergen — Bryggen + Fløibanen + Marché poissons</div><div class="act-desc">Bryggen : maisons hanséatiques classées UNESCO. Fløibanen : funiculaire 320m, vue panoramique fjords. Fisketorget : saumon frais à acheter. Bergen = ville la plus pluvieuse d'Europe → prévoir plan B.</div><div class="stats"><span class="chip">Funiculaire 135 NOK/adulte</span><span class="chip eu">~12€/adulte</span><span class="chip">70 NOK/enfant</span><span class="chip eu">~6€/enfant</span><span class="chip">Bryggen gratuit</span></div><a href="https://www.visitbergen.com" target="_blank">→ visitbergen.com</a></div>
+        <div class="note am">🏨 Van difficile à garer à Bergen. Réserver <a href="https://www.citybox.no/en/hotels/bergen/" target="_blank">Citybox Bergen</a> ~900 NOK/<strong>~80€</strong> la nuit, ou Bratland Camping ~250 NOK/<strong>~22€</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">3</div>
+      <div class="week-info"><div class="week-name">Sognefjord & Glaciers (Jostedalsbreen)</div><div class="week-dates">5 – 11 AOÛT</div></div>
+      <div class="week-km"><div class="week-km-val">~550 km</div><div class="week-km-lbl"></div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J18–19 · Mer–Jeu</div><div class="day-title">Nærøyfjord 🛳️ UNESCO · Ferry</div></div>
+        <div class="day-badges"><span class="badge b-ferry">Ferry UNESCO</span><span class="badge b-kids">Bateau</span></div>
+        <div class="activity"><div class="act-name">⛴️ Ferry Gudvangen → Flåm — Nærøyfjord UNESCO</div><div class="act-desc">2h dans le fjord le plus étroit du monde (250m large, 1700m de falaises). Cascades qui tombent dans le bateau. Les enfants sont scotchés à la rambarde. Village de Flåm au fond.</div><div class="stats"><span class="chip">~450 NOK/adulte</span><span class="chip eu">~40€/adulte</span><span class="chip">~250 NOK/enfant</span><span class="chip eu">~22€/enfant</span><span class="chip">2h navigation</span></div><a href="https://www.norwaynutshell.com" target="_blank">→ norwaynutshell.com</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J20 · Ven 07/08</div><div class="day-title">🚂 Flåmsbana — train mythique</div></div>
+        <div class="day-badges"><span class="badge b-kids">Train panoramique</span><span class="badge b-hike">Cascade Kjosfossen</span></div>
+        <div class="activity re"><div class="act-name">🚂 Flåmsbana — Train Flåm → Myrdal</div><div class="act-desc">Ligne parmi les plus spectaculaires au monde. 20 km, 863 m de dénivelé, 20 tunnels. Arrêt à la cascade Kjosfossen avec apparition de la Huldra sur les rochers. Les enfants sont émerveillés.</div><div class="stats"><span class="chip">450 NOK AR/adulte</span><span class="chip eu">~40€ AR/adulte</span><span class="chip">Gratuit -4 ans</span><span class="chip">2h AR</span></div><a href="https://www.flamsbana.no" target="_blank">→ flamsbana.no — RÉSERVER MAINTENANT 🔴</a></div>
+        <div class="note re">🔴 Complet 3 semaines avant en juillet/août. Réserver sur <a href="https://www.vy.no" target="_blank">vy.no</a> dès que possible.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J21 · Sam 08/08</div><div class="day-title">🧺 Jour lessive — Camping Flåm</div></div>
+        <div class="day-badges"><span class="badge b-wash">Lessive</span><span class="badge b-camp">Camping</span></div>
+        <div class="note full">Flåm Camping — vue extraordinaire au fond du fjord. Machine ~60 NOK / <strong>~5€</strong>.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J22–23 · Dim–Lun</div><div class="day-title">Route Sognefjellet + Glacier Nigardsbreen 🧊</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route panoramique</span><span class="badge b-hike">Glacier famille</span></div>
+        <div class="activity"><div class="act-name">🏔️ Rv55 Sognefjellet — Plus haute route d'Europe</div><div class="act-desc">1434m d'altitude. Neige des deux côtés même en août. Rennes en semi-liberté. Route étroite mais le California passe. Arrêt Turtagrø, vue Jotunheimen.</div><div class="stats"><span class="chip">~100 km</span><span class="chip eu">Gratuit</span></div></div>
+        <div class="activity au" style="margin-top:8px"><div class="act-name">🧊 Glacier Nigardsbreen — accessible familles</div><div class="act-desc">Bras du plus grand glacier d'Europe continentale (Jostedalsbreen). Randonnée balisée jusqu'à la glace bleue. Les enfants touchent le glacier. Traversée en barque du lac recommandée.</div><div class="stats"><span class="chip">200 NOK AR barque</span><span class="chip eu">~18€</span><span class="chip">80 NOK parking</span><span class="chip eu">~7€</span><span class="chip">2–3h AR</span></div><a href="https://www.jostedalsbreen.no" target="_blank">→ jostedalsbreen.no</a></div>
+        <div class="note au">🟡 <strong>Julien :</strong> Trail Hurrungane (Jotunheimen) depuis Turtagrø — 15 km AR, +1 200 m, vue sur Galdhøpiggen. Marion + enfants au bord du lac. <a href="https://www.jotunheimen.com" target="_blank">→ jotunheimen.com</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">4</div>
+      <div class="week-info"><div class="week-name">Ålesund, Route Atlantique & Trollstigen</div><div class="week-dates">12 – 18 AOÛT</div></div>
+      <div class="week-km"><div class="week-km-val">~600 km</div><div class="week-km-lbl"></div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J25–26 · Mer–Jeu</div><div class="day-title">Ålesund · Art Nouveau · Îles</div></div>
+        <div class="day-badges"><span class="badge b-city">Village Art Nouveau</span><span class="badge b-kids">Aquarium</span></div>
+        <div class="activity"><div class="act-name">🐟 Atlanterhavet Aquarium · Ålesund</div><div class="act-desc">Meilleur aquarium nordique. Phoques, loutres, poissons des fjords. Mont Aksla (418 marches, vue panoramique) à côté, gratuit. Bivouac sur les îles de Giske ou Vigra — plages de sable blanc.</div><div class="stats"><span class="chip">260 NOK/adulte</span><span class="chip eu">~23€/adulte</span><span class="chip">160 NOK/enfant</span><span class="chip eu">~14€/enfant</span><span class="chip">2–3h</span></div><a href="https://www.atlanterhavsparken.no" target="_blank">→ atlanterhavsparken.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J27 · Ven 14/08</div><div class="day-title">Route de l'Atlantique (Atlanterhavsveien) 🌊</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route panoramique</span><span class="badge b-kids">Îles & ponts</span></div>
+        <div class="activity au"><div class="act-name">🌉 Route de l'Atlantique — "Route du siècle"</div><div class="act-desc">8 ponts reliant 8 îles sur 8 km. Vagues spectaculaires par mauvais temps. Snorkeling et pêche au crabe par beau temps. Belvédère Eldhusøya pour les photos. Idéal avec enfants.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">Demi-journée</span></div><a href="https://www.visitnorway.com/listings/atlantic-road/182811/" target="_blank">→ visitnorway.com/atlantic-road</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J28 · Sam 15/08</div><div class="day-title">🧺 Jour lessive</div></div>
+        <div class="day-badges"><span class="badge b-wash">Lessive</span></div>
+        <div class="note full">Camping Molde ou Åndalsnes. Machine ~60 NOK / <strong>~5€</strong>.</div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J29–30 · Dim–Lun</div><div class="day-title">🐍 Trollstigen — Route des Trolls</div></div>
+        <div class="day-badges"><span class="badge b-drive">Route légendaire</span><span class="badge b-hike">Panorama</span></div>
+        <div class="activity"><div class="act-name">⛰️ Trollstigen — 11 épingles à 850m d'altitude</div><div class="act-desc">Route mythique taillée dans la montagne. 11 virages en épingle, pente à 10%, cascade Stigfossen à côté. Centre visiteurs avec passerelles panoramiques. Les enfants adorent "la route des Trolls". Ouvert juin–octobre uniquement.</div><div class="stats"><span class="chip eu">Gratuit</span><span class="chip">1h30 stop</span></div><a href="https://www.trollstigen.no" target="_blank">→ trollstigen.no</a></div>
+        <div class="note am">⚠️ Route étroite : largeur min ~2,3m. California T5 (1,93m) passe mais rouler lentement. Suivre panneaux "Stor bil".</div>
+        <div class="note au" style="margin-top:6px">🟡 <strong>Julien :</strong> Trail Romsdalseggen Ridge depuis Åndalsnes — 10 km, +1 000 m, vue Romsdalsfjord + Trollveggen. Parmi les plus belles randonnées de Norvège. <a href="https://www.visitnorway.com/listings/romsdalseggen/185427/" target="_blank">→ visitnorway.com/romsdalseggen</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">5</div>
+      <div class="week-info"><div class="week-name">Geiranger & Descente Est</div><div class="week-dates">19 – 25 AOÛT</div></div>
+      <div class="week-km"><div class="week-km-val">~700 km</div><div class="week-km-lbl"></div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J31–32 · Mar–Mer</div><div class="day-title">⭐ Geirangerfjord UNESCO 🛳️</div></div>
+        <div class="day-badges"><span class="badge b-ferry">Ferry Hellesylt↔Geiranger</span><span class="badge b-kids">7 Sœurs</span></div>
+        <div class="activity re"><div class="act-name">⛴️ Ferry Hellesylt → Geiranger · Les 7 Sœurs</div><div class="act-desc">1h dans le fjord le plus spectaculaire du monde (UNESCO). Cascades "7 Sœurs" (7 chutes côte à côte), villages abandonnés sur les falaises. Les enfants regardent bouche bée. Puis route des Aigles (Ørnevegen) — 11 épingles avec vue plongeante.</div><div class="stats"><span class="chip">600–800 NOK van+4</span><span class="chip eu">~55–70€</span><span class="chip">1h navigation</span></div><a href="https://www.fjord1.no" target="_blank">→ fjord1.no — réservation van obligatoire</a></div>
+        <div class="note au">🩷 <strong>Marion :</strong> Sentier Storsæterfossen depuis Geiranger — 6 km AR, forêt, cascade en bout de chemin, peu fréquenté. <a href="https://ut.no" target="_blank">→ ut.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J33 · Jeu 20/08</div><div class="day-title">🧺 Jour lessive — Camping Geiranger</div></div>
+        <div class="day-badges"><span class="badge b-wash">Lessive</span><span class="badge b-camp">Camping</span></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J34–35 · Ven–Sam</div><div class="day-title">Dovrefjell · Muscs sauvages 🦬</div></div>
+        <div class="day-badges"><span class="badge b-hike">Faune sauvage</span><span class="badge b-kids">Muscs</span></div>
+        <div class="activity au"><div class="act-name">🦬 Observer les bœufs musqués — Dovrefjell</div><div class="act-desc">Les seuls bœufs musqués sauvages d'Europe ! Randonnée libre depuis Kongsvoll ou tour guidé. Les enfants adorent ces "mammouths à poils longs". Bivouac en altitude.</div><div class="stats"><span class="chip">Tour guidé ~500 NOK/adulte</span><span class="chip eu">~45€/adulte</span><span class="chip">Rando libre gratuit</span><span class="chip">3–5h</span></div><a href="https://www.nasjonalparkene.no/dovrefjell" target="_blank">→ nasjonalparkene.no/dovrefjell</a></div>
+        <div class="note au">🟡 <strong>Julien :</strong> Trail Snøhetta (2286m) — 14 km AR, +900 m, vue 360°. Marion + enfants au bivouac plateau. <a href="https://ut.no/tur/3016765" target="_blank">→ Fiche Snøhetta sur ut.no</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J36–37 · Dim–Lun</div><div class="day-title">Lillehammer → Oslo → frontière suédoise</div></div>
+        <div class="day-badges"><span class="badge b-kids">JO 1994</span><span class="badge b-drive">Descente Est</span></div>
+        <div class="activity au"><div class="act-name">🎿 Maihaugen + Luge d'été · Lillehammer</div><div class="act-desc">Musée en plein air Maihaugen (130 bâtiments historiques). Luge d'été sur la piste olympique (juin–août). Le 7 ans adore les JO.</div><div class="stats"><span class="chip">220 NOK/adulte Maihaugen</span><span class="chip eu">~20€/adulte</span><span class="chip">100 NOK/descente luge</span><span class="chip eu">~9€</span></div><a href="https://www.maihaugen.no" target="_blank">→ maihaugen.no</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="week">
+    <div class="week-head" onclick="tog(this)">
+      <div class="week-num">6</div>
+      <div class="week-info"><div class="week-name">Retour · Suède → Kiel → Gardanne</div><div class="week-dates">25 – 28 AOÛT</div></div>
+      <div class="week-km"><div class="week-km-val">~1 500 km</div><div class="week-km-lbl">retour</div></div>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="week-body">
+      <div class="day">
+        <div class="day-top"><div class="day-label">J38–39 · Mar–Mer</div><div class="day-title">Suède · Lac Vänern · Göteborg</div></div>
+        <div class="day-badges"><span class="badge b-drive">Suède</span><span class="badge b-kids">Liseberg</span></div>
+        <div class="activity au"><div class="act-name">🎡 Liseberg · Göteborg — plus grand parc Scandinavie</div><div class="act-desc">Belle façon de finir le voyage avec les enfants. Manèges adaptés dès 3 ans. Demi-journée suffit.</div><div class="stats"><span class="chip">~350 SEK/adulte</span><span class="chip eu">~30€/adulte</span><span class="chip">Gratuit -90cm</span><span class="chip">Demi-journée</span></div><a href="https://www.liseberg.com" target="_blank">→ liseberg.com</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J40 · Jeu 27/08</div><div class="day-title">Göteborg → Ferry Kiel · départ ~18h 🛳️</div></div>
+        <div class="day-badges"><span class="badge b-ferry">Stena Line nuit</span></div>
+        <div class="activity re"><div class="act-name">⛴️ Ferry Göteborg → Kiel · Stena Line · ~14h</div><div class="act-desc">Cabine famille recommandée. Arrivée Kiel le matin. Route retour France sur 2 jours.</div><div class="stats"><span class="chip eu">Cabine famille ~150–300€</span></div><a href="https://www.stenaline.fr" target="_blank">→ stenaline.fr — RÉSERVER MAINTENANT 🔴</a></div>
+      </div>
+      <div class="day">
+        <div class="day-top"><div class="day-label">J41–42 · Ven–Sam</div><div class="day-title">Kiel → Gardanne · 2 jours de route 🏠</div></div>
+        <div class="day-badges"><span class="badge b-drive">Retour</span></div>
+        <div class="note full">Même logique qu'à l'aller : ≤5h/jour, pause visite (Cologne, Strasbourg…). Arrivée Gardanne ~26 août.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNIQUE -->
+<section id="pratique">
+  <span class="section-tag">Van & Technique</span>
+  <h2 class="section-title">Problèmes identifiés & solutions</h2>
+  <div class="sep"></div>
+
+  <div class="pcard">
+    <div class="phead"><span>🔥</span><h4>Gaz — Les bouteilles françaises ne s'échangent pas en Norvège</h4></div>
+    <div class="pbody"><p>Raccord incompatible avec le système norvégien. Impossible d'acheter une bouteille locale et de la brancher directement.</p>
+    <div class="sol"><strong>✓ Solution</strong><p><strong>Avant le départ :</strong> Acheter un <strong>adaptateur D3</strong> (IG M14×1,5 → KLF G12) spécifique Norvège/Suède/Finlande, ~20€. <a href="https://www.laboutiquedugaz.fr/produit/kit-adaptateur-pour-le-branchement-de-detendeurs-sur-le-robinet-de-divers-pays-europeens/" target="_blank">→ laboutiquedugaz.fr</a><br><br><strong>En Norvège :</strong> Réseau <strong>LPG Norge</strong> — remplissage de votre bouteille française directement (~20–40€ pour bouteille vide). <a href="https://www.mylpg.eu/stations/norway/" target="_blank">→ Trouver stations LPG Norvège</a></p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>🛣️</span><h4>Péages automatiques — Facture par reconnaissance de plaque</h4></div>
+    <div class="pbody"><p>Pas de barrières en Norvège. Portiques lisent votre plaque, facture envoyée chez vous. Oslo, Bergen, Stavanger, Kristiansand ont des péages urbains.</p>
+    <div class="sol"><strong>✓ Solution</strong><p>Badge <strong>AutoPass / Epass24</strong> avant le départ : -10–20% sur péages + jusqu'à 50% sur certains ferries. Badge ~200 NOK / <strong>~18€</strong>, délai 2–3 semaines. <a href="https://www.autopass.no" target="_blank">→ autopass.no</a><br><br>Budget total péages estimé avec badge : <strong>200–300€ / 6 semaines</strong>.</p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>🧺</span><h4>Lessive — Pas de lavomatics dans les villages</h4></div>
+    <div class="pbody"><p>Contrairement à la France, laveries automatiques quasi-inexistantes hors des campings.</p>
+    <div class="sol"><strong>✓ Solutions combinées</strong><p>1. Camping 1×/semaine (planifié) : machines ~50–80 NOK / <strong>~5–7€</strong> le cycle.<br>2. Lavage main : bassine pliable + savon Ecover biodégradable pour linge fin.<br>3. <a href="https://www.scrubba.com" target="_blank">Sac Scrubba</a> (~50€) : lavage intensif à la main en 3 min.<br>4. Prévoir 10 jours de vêtements par personne minimum.</p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>⛽</span><h4>Diesel — Prix élevé + zones isolées sans station</h4></div>
+    <div class="pbody"><p>Diesel ~1,80–2€/L en Norvège. Sur 7 500 km à 9L/100 = ~675L = <strong>~1 200–1 350€ de carburant</strong>.</p>
+    <div class="sol"><strong>✓ Conseils</strong><p><strong>Faire le plein en Allemagne</strong> avant Kiel (~1,65€/L) et en Suède au retour (~1,70€/L). En Norvège : <strong>Circle K</strong> et <strong>Uno-X</strong> les moins chers. <strong>Jerrican 10L recommandé</strong> pour Sognefjellet et Dovrefjell (zones sans station sur 100+ km).</p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>💧</span><h4>Eaux grises & eau potable en bivouac sauvage</h4></div>
+    <div class="pbody"><p>Le California génère des eaux grises (évier). Gestion à prévoir en bivouac.</p>
+    <div class="sol"><strong>✓ Solutions</strong><p>Rejet légal à 150m d'une source ou habitation avec <strong>savons biodégradables uniquement</strong> (Ecover, Dr. Bronner). Vidange via Park4Night ou <a href="https://motorrestop.no" target="_blank">motorrestop.no</a>. <strong>Eau potable :</strong> directement dans les torrents de montagne (qualité irréprochable en Norvège).</p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>📱</span><h4>Internet & GPS — Zones sans couverture en montagne</h4></div>
+    <div class="pbody"><p>4G bonne en ville, absente dans certains fjords profonds et haute montagne.</p>
+    <div class="sol"><strong>✓ Solutions</strong><p>Cartes hors-ligne : <strong>OsmAnd</strong> ou <strong>Maps.me</strong> (GPS sans internet — télécharger Norvège + Suède avant départ). Météo : <strong>Yr.no</strong> (officielle norvégienne, très précise). Bivouacs hors-ligne : <strong>Park4Night</strong>. Pas de frais de roaming (Norvège = EEA).</p></div></div>
+  </div>
+
+  <div class="pcard">
+    <div class="phead"><span>🥕</span><h4>Douane — Restrictions alimentaires à l'entrée en Norvège</h4></div>
+    <div class="pbody"><p>La Norvège n'est pas dans l'UE. Des contrôles phytosanitaires existent à la frontière.</p>
+    <div class="sol"><strong>✓ Ce qu'il faut savoir</strong><p><strong>Interdit :</strong> Pommes de terre fraîches, certains fruits/légumes frais non emballés.<br><strong>Autorisé :</strong> Conserves, épicerie sèche, fromages emballés, charcuterie emballée, huile d'olive, épices.<br><strong>Alcool très limité :</strong> 1L spiritueux + 1,5L vin (3× plus cher en Norvège, vendu uniquement dans les Vinmonopolet, fermés le dimanche). <a href="https://www.toll.no/en/" target="_blank">→ toll.no (douane officielle)</a></p></div></div>
+  </div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">🚐</div><h3>VW California T5 en Norvège</h3></div>
+    <ul>
+      <li><strong>Hauteur tunnels :</strong> California = 1,97m — tunnels norvégiens ≥ 4m. Aucun problème.</li>
+      <li><strong>Routes étroites :</strong> California = 1,93m — Trollstigen (min 2,3m) et Lysevegen praticables, rouler lentement.</li>
+      <li><strong>Prises électriques :</strong> Norvège = 230V/50Hz identique à la France. Aucun adaptateur.</li>
+      <li><strong>Vitesse :</strong> 80 km/h route nationale, 50 en agglomération. Radars très fréquents, amendes élevées.</li>
+      <li><strong>Grilles "Ferist" :</strong> Grilles anti-animaux dans la route — rouler dessus doucement, signalées par panneaux.</li>
+      <li><strong>Consigne :</strong> Canettes et bouteilles plastiques consignées ~2 NOK. Machines de retour dans tous les supermarchés — activité amusante avec les enfants !</li>
+    </ul>
+  </div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">📋</div><h3>Checklist avant départ</h3></div>
+    <ul>
+      <li><strong>Réserver ferry Kiel → Oslo</strong> (Color Line, cabine famille) · <a href="https://www.colorline.com" target="_blank">colorline.com</a></li>
+      <li><strong>Réserver ferry Göteborg → Kiel</strong> (Stena Line, cabine famille) · <a href="https://www.stenaline.fr" target="_blank">stenaline.fr</a></li>
+      <li><strong>Réserver Flåmsbana</strong> AR · <a href="https://www.vy.no" target="_blank">vy.no</a></li>
+      <li><strong>Commander badge AutoPass</strong> (délai 3 semaines) · <a href="https://www.autopass.no" target="_blank">autopass.no</a></li>
+      <li><strong>Acheter adaptateur gaz D3</strong> (~20€) · <a href="https://www.laboutiquedugaz.fr" target="_blank">laboutiquedugaz.fr</a></li>
+      <li><strong>Réserver Dyreparken Kristiansand</strong> · <a href="https://www.dyreparken.no" target="_blank">dyreparken.no</a></li>
+      <li><strong>Télécharger OsmAnd + cartes Norvège/Suède</strong> hors-ligne</li>
+      <li><strong>Télécharger Park4Night</strong> avec bivouacs Norvège hors-ligne</li>
+      <li><strong>Porte-bébé dorsal</strong> pour le 3 ans (Preikestolen)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ALIMENTATION -->
+<section id="nourriture">
+  <span class="section-tag">Alimentation · Cuisine van</span>
+  <h2 class="section-title">Manger bio & bien en Norvège</h2>
+  <div class="sep"></div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">🛒</div><h3>Où faire ses courses ?</h3></div>
+    <ul>
+      <li><strong>Meny</strong> — Le supermarché de qualité : rayon bio étendu, fromages, poisson frais au comptoir, produits locaux. Grandes villes uniquement.</li>
+      <li><strong>Rema 1000</strong> — Excellent rapport qualité/prix, gamme bio label "Nyt Norge". Télécharger l'app Æ : -10% automatique sur légumes/fruits. <a href="https://www.rema.no" target="_blank">→ rema.no</a></li>
+      <li><strong>Coop Extra / Mega</strong> — Bonne sélection bio label Svanen. Villes moyennes.</li>
+      <li><strong>Kiwi</strong> — Pour dépannages uniquement, peu de bio mais partout.</li>
+    </ul>
+  </div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">🇫🇷</div><h3>À emporter de France (introuvable ou très cher)</h3></div>
+    <ul>
+      <li><strong>Huile d'olive bio</strong> — quasi-introuvable (emporter 2–3L)</li>
+      <li><strong>Fromages français</strong> (comté, chèvre frais emballé)</li>
+      <li><strong>Herbes de Provence, thym, romarin, laurier</strong></li>
+      <li><strong>Légumineuses sèches bio</strong> (lentilles, pois chiches, haricots)</li>
+      <li><strong>Moutarde de Dijon</strong> — introuvable en qualité française</li>
+      <li><strong>Chocolat noir bio 85%+</strong></li>
+      <li><strong>Café en grains bio</strong> (cher en Norvège)</li>
+    </ul>
+    <div class="note am full" style="margin-top:10px">⚠️ Ne pas apporter : pommes de terre fraîches, certains fruits/légumes frais non emballés (restrictions douanières).</div>
+  </div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">🐟</div><h3>Le meilleur à acheter sur place</h3></div>
+    <ul>
+      <li><strong>Saumon fumé</strong> — 400g ~8€, infiniment meilleur et moins cher qu'en France.</li>
+      <li><strong>Saumon frais entier</strong> — papillote sur le réchaud, parfait.</li>
+      <li><strong>Skrei</strong> (morue fraîche) — de saison en juillet, excellent grillé.</li>
+      <li><strong>Brunost</strong> — fromage brun caramélisé norvégien, indispensable pour les tartines du matin.</li>
+      <li><strong>Myrtilles, airelles, chicouté</strong> — cueillette libre et légale partout en juillet/août (allemannsretten). Les enfants adorent ramasser.</li>
+      <li><strong>Œufs bio / pain de seigle (rugbrød)</strong> — excellente qualité, moins chers qu'en France.</li>
+    </ul>
+  </div>
+
+  <div class="icard">
+    <div class="icard-head"><div class="iicon">🍳</div><h3>Recettes faciles au réchaud van</h3></div>
+    <p style="font-size:13px;color:var(--stone);margin-bottom:10px">Plats en 1 casserole, cuisson rapide :</p>
+    <div>
+      <span class="rchip">🐟 Papillote saumon citron aneth</span>
+      <span class="rchip">🥘 Dal lentilles corail curry</span>
+      <span class="rchip">🍝 Pâtes pesto saumon fumé</span>
+      <span class="rchip">🫕 Soupe miso légumes</span>
+      <span class="rchip">🥞 Pancakes avoine myrtilles</span>
+      <span class="rchip">🥙 Wraps saumon fumé concombre</span>
+      <span class="rchip">🍲 Risotto champignons séchés</span>
+      <span class="rchip">🫘 Chili sin carne haricots</span>
+      <span class="rchip">🥗 Salade quinoa betterave chèvre</span>
+    </div>
+    <div class="note full" style="margin-top:12px"><strong>Petit-déjeuner type :</strong> Flocons d'avoine + yaourt + myrtilles cueillies + miel norvégien + noix. Rapide, nourrissant, une seule vaisselle.</div>
+    <div class="note am full" style="margin-top:8px">⚠️ <strong>Plats difficiles au van :</strong> Raclette (matériel spécifique), mijotés longs (gaz limité), pâtisseries. Privilégier cuissons rapides en une casserole.</div>
+  </div>
+</section>
+
+<!-- BUDGET -->
+<section id="budget">
+  <span class="section-tag">Budget global</span>
+  <h2 class="section-title">Estimation : objectif 5–6 000€</h2>
+  <div class="sep"></div>
+  <div class="icard">
+    <div class="brow"><div class="blbl">⛴️ Ferries internationaux<small>Kiel↔Oslo (Color Line) + Göteborg↔Kiel (Stena) · cabines famille</small></div><div class="bamt">900–1 200€</div></div>
+    <div class="brow"><div class="blbl">⛽ Carburant diesel<small>~7 500 km × 9L/100 × 1,80€ moyen</small></div><div class="bamt">1 100–1 350€</div></div>
+    <div class="brow"><div class="blbl">🛣️ Péages & tunnels Norvège<small>Badge AutoPass inclus</small></div><div class="bamt">200–300€</div></div>
+    <div class="brow"><div class="blbl">⛴️ Ferries internes Norvège<small>Lysefjord, Nærøyfjord, Geiranger, Flåm…</small></div><div class="bamt">400–600€</div></div>
+    <div class="brow"><div class="blbl">🛒 Alimentation · 42 jours<small>Cuisine van 95% — Meny + Rema 1000</small></div><div class="bamt">1 000–1 300€</div></div>
+    <div class="brow"><div class="blbl">🏕️ Campings lessive<small>6 nuits × ~45€ (machine + emplacement)</small></div><div class="bamt">270€</div></div>
+    <div class="brow"><div class="blbl">🏨 Hébergements ponctuels<small>Bergen 1–2 nuits hôtel</small></div><div class="bamt">150–200€</div></div>
+    <div class="brow"><div class="blbl">🎟️ Activités & entrées<small>Flåmsbana, Dyrepark, musées, aquarium, funiculaire Bergen…</small></div><div class="bamt">400–600€</div></div>
+    <div class="brow"><div class="blbl">🔧 Divers & imprévus<small>Gaz, badge AutoPass, pharmacie, parkings…</small></div><div class="bamt">200–300€</div></div>
+    <div class="brow btot"><div class="blbl">💶 TOTAL ESTIMÉ</div><div class="bamt">4 620–5 920€</div></div>
+  </div>
+  <div class="note au full">✅ <strong>Objectif tenu</strong> si : cuisine van à 95%, ferries réservés maintenant (prix × 2–3 sinon), 1 resto/semaine max.</div>
+  <div class="note am full" style="margin-top:8px">💡 <strong>Économie principale :</strong> Réserver les 3 ferries + Flåmsbana maintenant = économiser potentiellement 500–800€ vs prix de dernière minute en juillet.</div>
+</section>
+
+<footer>Roadtrip Norvège · Julien & Marion · Été 2026 · VW California T5 · 🇳🇴 Bonne route !</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===== MAP — runs after Leaflet is loaded =====
+window.addEventListener('load', function() {
+  if (typeof L === 'undefined') return;
+  var map = L.map('map', {zoomControl:true, scrollWheelZoom:false}).setView([59, 9], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 18
+  }).addTo(map);
+  var stops = [
+    {lat:43.45,lng:5.47,  name:"🏠 Gardanne — Départ 18 juil.",      c:"#e8924a"},
+    {lat:54.32,lng:10.12, name:"⛴️ Kiel — Ferry Color Line → Oslo",   c:"#d94f4f"},
+    {lat:59.91,lng:10.75, name:"🗿 Oslo — Vigeland Park",              c:"#3ab5be"},
+    {lat:58.16,lng:8.02,  name:"🦁 Kristiansand — Dyrepark",           c:"#3ab5be"},
+    {lat:58.47,lng:5.99,  name:"🏖️ Jæren — Plages sauvages",          c:"#5ecb8f"},
+    {lat:58.97,lng:5.73,  name:"🛢️ Stavanger — Musée Pétrole",        c:"#3ab5be"},
+    {lat:58.99,lng:6.19,  name:"⛰️ Preikestolen — 604m",              c:"#e8924a"},
+    {lat:59.06,lng:6.65,  name:"⛴️ Lysebotn — Ferry Lysefjord",       c:"#d94f4f"},
+    {lat:60.07,lng:6.55,  name:"💧 Odda — Hardangerfjord · Trolltunga",c:"#3ab5be"},
+    {lat:60.39,lng:5.32,  name:"🏘️ Bergen — Bryggen UNESCO",          c:"#5ecb8f"},
+    {lat:60.86,lng:6.84,  name:"⛴️ Gudvangen — Nærøyfjord UNESCO",    c:"#d94f4f"},
+    {lat:60.86,lng:7.11,  name:"🚂 Flåm — Flåmsbana train",           c:"#3ab5be"},
+    {lat:61.47,lng:7.46,  name:"🏔️ Sognefjellet Rv55",                c:"#e8924a"},
+    {lat:61.69,lng:7.18,  name:"🧊 Nigardsbreen — Glacier famille",    c:"#3ab5be"},
+    {lat:62.47,lng:6.16,  name:"🐟 Ålesund — Aquarium · Art Nouveau",  c:"#3ab5be"},
+    {lat:62.98,lng:7.55,  name:"🌊 Route de l'Atlantique",             c:"#5ecb8f"},
+    {lat:62.46,lng:7.67,  name:"🐍 Trollstigen — Route des Trolls",    c:"#e8924a"},
+    {lat:62.10,lng:7.09,  name:"⭐ Geirangerfjord — UNESCO",           c:"#5ecb8f"},
+    {lat:62.23,lng:9.54,  name:"🦬 Dovrefjell — Muscs sauvages",       c:"#3ab5be"},
+    {lat:61.12,lng:10.47, name:"🎿 Lillehammer — JO 1994",             c:"#3ab5be"},
+    {lat:57.71,lng:11.97, name:"🎡 Göteborg — Liseberg · Ferry retour",c:"#d94f4f"},
+    {lat:43.45,lng:5.47,  name:"🏠 Gardanne — Retour 26 août",         c:"#5ecb8f"}
+  ];
+  L.polyline(stops.map(function(s){return[s.lat,s.lng];}),
+    {color:'#3ab5be',weight:2.5,opacity:0.65,dashArray:'6,4'}).addTo(map);
+  stops.forEach(function(s){
+    var icon = L.divIcon({
+      html: '<div style="width:11px;height:11px;border-radius:50%;background:'+s.c+';border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',
+      iconSize:[11,11], iconAnchor:[5,5], className:''
+    });
+    L.marker([s.lat,s.lng],{icon:icon}).addTo(map)
+      .bindPopup('<div style="font:500 13px/1.4 sans-serif;color:#12202c">'+s.name+'</div>',{maxWidth:220});
+  });
+});
+
+// ===== NAV ACTIVE ON SCROLL =====
+function updateNav() {
+  var y = window.scrollY + 80;
+  var ids = ['carte','planning','pratique','nourriture','budget'];
+  var cur = ids[0];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.offsetTop <= y) cur = id;
+  });
+  document.querySelectorAll('#nav a').forEach(function(a) {
+    var active = a.getAttribute('href') === '#' + cur;
+    a.classList.toggle('active', active);
+    if (active) a.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  });
+}
+window.addEventListener('scroll', updateNav, {passive:true});
+updateNav();
+
+// ===== WEEK ACCORDION =====
+function tog(head) {
+  var body = head.nextElementSibling;
+  var chev = head.querySelector('.chevron');
+  var isOpen = body.classList.contains('open');
+  document.querySelectorAll('.week-body').forEach(function(b){b.classList.remove('open');});
+  document.querySelectorAll('.chevron').forEach(function(c){c.classList.remove('open');});
+  if (!isOpen) { body.classList.add('open'); chev.classList.add('open'); }
+}
+// Open first week on load
+document.querySelector('.week-head').click();
+</script>
+</body>
+</html>
