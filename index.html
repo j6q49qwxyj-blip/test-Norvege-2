@@ -160,7 +160,7 @@
 
   <section id="aller">
     <h2 class="section-title">🚗 Trajet aller — Gardanne → Norvège</h2>
-    <p class="section-sub">4 jours de transit validés, avec une activité le matin près de l'étape, puis route à 13h (sieste d'Éole). Le trajet fait partie du voyage.</p>
+    <p class="section-sub">5 jours de transit (départ le 18/07 au soir). Temps de route réels Google Maps, calculés depuis les coordonnées GPS exactes des spots dodo. Chaque étape a son lien Park4Night.</p>
     <div id="aller-list"></div>
   </section>
 
@@ -229,26 +229,28 @@
 //  videoTime : secondes (pour lien horodaté YouTube)
 // ============================================================
 
-// Étapes du parcours dans l'ordre, pour tracer les pointillés + temps de trajet
+// Étapes du parcours dans l'ordre, pour tracer la route + temps de trajet
+// Transit Europe : temps RÉELS Google Maps. Norvège : estimations à affiner (ferries).
 const PARCOURS = [
   { nom: "Gardanne (départ 18/07 soir)", coords: [43.452, 5.471], type: "depart" },
-  { nom: "Avant Lyon (bivouac J1)", coords: [45.32, 4.82], type: "transit", trajet: "~3h depuis Gardanne (départ en soirée)" },
-  { nom: "Vosges (bivouac J2)", coords: [48.039, 7.138], type: "transit", trajet: "~5h (~450 km)" },
-  { nom: "Laacher See (bivouac J3)", coords: [50.412, 7.271], type: "transit", trajet: "~4h30 (~450 km)" },
-  { nom: "Jutland sud (bivouac J4)", coords: [55.47, 8.45], type: "transit", trajet: "~6h (~650 km)" },
-  { nom: "Hirtshals (ferry J5)", coords: [57.596, 9.974], type: "transit", trajet: "~1h30 (~150 km) + Bulbjerg" },
-  { nom: "Kristiansand", coords: [58.146, 7.995], type: "zone", trajet: "Ferry 2h30 (Hirtshals→Kristiansand)" },
-  { nom: "Stavanger / Lysefjord", coords: [58.969, 5.733], type: "zone", trajet: "~3h15 (~240 km)" },
-  { nom: "Hardangerfjord", coords: [60.13, 6.55], type: "zone", trajet: "~3h30 (~210 km, ferries possibles)" },
-  { nom: "Bergen", coords: [60.39, 5.32], type: "zone", trajet: "~2h30 (~150 km)" },
-  { nom: "Nærøyfjord / Flåm", coords: [60.87, 6.88], type: "zone", trajet: "~2h45 (~165 km)" },
-  { nom: "Sognefjord / Glaciers", coords: [61.66, 7.20], type: "zone", trajet: "~2h30 (~130 km)" },
-  { nom: "Loen / Nordfjord", coords: [61.87, 6.85], type: "zone", trajet: "~1h30 (~70 km)" },
-  { nom: "Geirangerfjord", coords: [62.10, 7.21], type: "zone", trajet: "~2h (~90 km, route + ferry)" },
-  { nom: "Ålesund / Route Atlantique", coords: [62.47, 6.15], type: "zone", trajet: "~2h45 (~120 km)" },
-  { nom: "Åndalsnes / Trollstigen", coords: [62.57, 7.69], type: "zone", trajet: "~2h (~110 km)" },
-  { nom: "Jotunheimen (Bessegen)", coords: [61.50, 8.31], type: "zone", trajet: "~4h (~230 km, détour intérieur)" },
-  { nom: "Retour Est / Suède", coords: [62.0, 11.5], type: "zone", trajet: "~5h (~330 km vers corridor suédois)" },
+  { nom: "Vienne (bivouac J1)", coords: [45.525, 4.874], type: "transit", trajet: "Gardanne → Vienne : 280 km · 2h47 (Google)" },
+  { nom: "Vosges / Hohrod (bivouac J2)", coords: [48.039, 7.138], type: "transit", trajet: "Vienne → Hohrod : 465 km · 4h47 (Google)" },
+  { nom: "Laacher See / Mendig (bivouac J3)", coords: [50.412, 7.271], type: "transit", trajet: "Hohrod → Mendig : 367 km · 4h07 (Google)" },
+  { nom: "Hambourg (bivouac J4)", coords: [53.549, 9.987], type: "transit", trajet: "Mendig → Hambourg : 515 km · 5h37 (Google)" },
+  { nom: "Esbjerg (bivouac J5)", coords: [55.476, 8.459], type: "transit", trajet: "Hambourg → Esbjerg : 269 km · 3h26 (Google)" },
+  { nom: "Hirtshals (ferry J6)", coords: [57.596, 9.974], type: "transit", trajet: "Esbjerg → Hirtshals : 341 km · 3h38 (Google) + Bulbjerg" },
+  { nom: "Kristiansand", coords: [58.146, 7.995], type: "zone", trajet: "Ferry Hirtshals→Kristiansand : 2h30" },
+  { nom: "Stavanger / Lysefjord", coords: [58.969, 5.733], type: "zone", trajet: "~3h15 (~240 km) — à affiner (ferries)" },
+  { nom: "Hardangerfjord", coords: [60.13, 6.55], type: "zone", trajet: "~3h30 — à affiner (toll-calculator.no)" },
+  { nom: "Bergen", coords: [60.39, 5.32], type: "zone", trajet: "~2h30 — à affiner (ferries)" },
+  { nom: "Nærøyfjord / Flåm", coords: [60.87, 6.88], type: "zone", trajet: "~2h45 — à affiner" },
+  { nom: "Sognefjord / Glaciers", coords: [61.66, 7.20], type: "zone", trajet: "~2h30 — à affiner (ferries)" },
+  { nom: "Loen / Nordfjord", coords: [61.87, 6.85], type: "zone", trajet: "~1h30 — à affiner" },
+  { nom: "Geirangerfjord", coords: [62.10, 7.21], type: "zone", trajet: "~2h (route + ferry) — à affiner" },
+  { nom: "Ålesund / Route Atlantique", coords: [62.47, 6.15], type: "zone", trajet: "~2h45 — à affiner (ferries)" },
+  { nom: "Åndalsnes / Trollstigen", coords: [62.57, 7.69], type: "zone", trajet: "~2h — à affiner" },
+  { nom: "Jotunheimen (Bessegen)", coords: [61.50, 8.31], type: "zone", trajet: "~4h (détour intérieur) — à affiner" },
+  { nom: "Retour Est / Suède", coords: [62.0, 11.5], type: "zone", trajet: "~5h vers corridor suédois — à affiner" },
 ];
 
 const ZONES = [
@@ -449,13 +451,13 @@ const ZONES = [
   },
 ];
 
-// ----- Trajet ALLER (validé) -----
+// ----- Trajet ALLER (temps réels Google Maps depuis coordonnées GPS exactes des spots Park4Night) -----
 const TRAJET_ALLER = [
-  { jour: "J1 · 18 juil (soir)", trajet: "Gardanne → avant Lyon", km: "~3h de route", activite: "Départ en soirée après le travail. On avale 3h tranquilles et on dort sur le trajet (probablement un peu avant Lyon).", note: "Étape courte de mise en route — pas d'activité, juste rouler et dormir." },
-  { jour: "J2 · 19 juil", trajet: "Avant Lyon → Vosges", km: "~5h · ~450 km", activite: "Bivouac en forêt vosgienne. Balade fraîche pour dérouiller les jambes.", note: "" },
-  { jour: "J3 · 20 juil", trajet: "Vosges → Laacher See (Eifel, DE)", km: "~450 km · ~4h30", activite: "Lac volcanique en caldeira. Tour du lac à pied (~8 km plat) le matin, baignade possible.", note: "Activité matin avant la route de 13h (sieste Éole)." },
-  { jour: "J4 · 21 juil", trajet: "Laacher See → Jutland sud (DK)", km: "~650 km · ~6h", activite: "Plage de la mer du Nord — dunes, vent, espace. Les enfants adorent.", note: "" },
-  { jour: "J5 · 22 juil", trajet: "Jutland → Bulbjerg → Hirtshals", km: "~150 km · ~1h30", activite: "Falaises de Bulbjerg (calcaire, bunkers WW2, vue mer) le matin, puis ferry.", note: "Ferry Hirtshals → Kristiansand · 2h30 · cabine à réserver." },
+  { jour: "J1 · sam 18 juil (soir)", trajet: "Gardanne → Notre Dame des Conches (Ramasse, 01)", km: "~370 km · 3h40", activite: "Départ en soirée après le travail. Spot sur les hauteurs du Revermont, vue sur la Bresse. Gratuit, barbecue, calme.", note: "Spot en hauteur (accès plus simple par Ceyzériat). Hauteur limite 3,2m — OK pour le T5.", dodo: "Notre Dame des Conches, Jasseron/Ramasse (01250)", dodoLien: "https://park4night.com/fr/place/42493" },
+  { jour: "J2 · dim 19 juil", trajet: "Ramasse → Heidelberg (Wanderparkplatz Schwabenweg, DE)", km: "551 km · 5h34", activite: "Grosse étape de route. Parking en forêt avec départs de chemins, fontaine d'eau potable. Halte possible Colmar/Strasbourg en chemin.", note: "Passage frontière France → Allemagne. Gratuit, calme la nuit.", dodo: "Wanderparkplatz Schwabenweg, Heidelberg", dodoLien: "https://park4night.com/fr/place/365036" },
+  { jour: "J3 · lun 20 juil", trajet: "Heidelberg → Hanstedt (Lüneburger Heide)", km: "540 km · 5h38", activite: "Arrivée en lisière de la lande de Lüneburg (Lüneburger Heide), grand espace naturel. Balade possible en fin de journée.", note: "", dodo: "Hanstedt (sud de Hambourg)", dodoLien: "https://park4night.com/fr/place/210877" },
+  { jour: "J4 · mar 21 juil", trajet: "Hanstedt → Ulbjerg Strand / Skals (DK)", km: "420 km · 4h34", activite: "Arrivée au bord de l'eau à Ulbjerg Strand (fjord de Hjarbæk). Baignade / plage en arrivant.", note: "Passage frontière Allemagne → Danemark.", dodo: "Ulbjerg Strand, Skals", dodoLien: "https://park4night.com/fr/place/84766" },
+  { jour: "J5 · mer 22 juil", trajet: "Skals → Hirtshals + ferry", km: "138 km · 1h34", activite: "Courte route le matin jusqu'au port. Ferry Hirtshals → Kristiansand (2h30) — l'aventure norvégienne commence.", note: "Étape volontairement courte : le ferry enchaîne derrière. Cabine à réserver.", dodo: "→ Embarquement ferry Hirtshals", dodoLien: "" },
 ];
 
 // ----- Trajet RETOUR (à caler) -----
@@ -648,7 +650,9 @@ document.getElementById("aller-list").innerHTML=TRAJET_ALLER.map(e=>
      <td style="width:130px;background:var(--fjord);color:#fff;font-weight:700">${e.jour}</td>
      <td><b>${e.trajet}</b> · <span style="color:var(--gris)">${e.km}</span><br>
        <span style="font-size:13px">🌅 ${e.activite}</span>
-       ${e.note?`<br><span style="font-size:12.5px;color:var(--etude)">⚠️ ${e.note}</span>`:""}</td>
+       ${e.note?`<br><span style="font-size:12.5px;color:var(--etude)">⚠️ ${e.note}</span>`:""}
+       ${e.dodo?`<br><span style="font-size:12.5px;color:var(--mousse);font-weight:600">🛏️ ${e.dodo}</span>`:""}
+       ${e.dodoLien?` <a class="src-link officiel" style="margin-left:4px" href="${e.dodoLien}" target="_blank" rel="noopener">📍 Voir le spot sur Park4Night ↗</a>`:""}</td>
    </tr></table></div>`).join("");
 
 // Trajet retour
