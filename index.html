@@ -232,13 +232,12 @@
 // Étapes du parcours dans l'ordre, pour tracer la route + temps de trajet
 // Transit Europe : temps RÉELS Google Maps. Norvège : estimations à affiner (ferries).
 const PARCOURS = [
-  { nom: "Gardanne (départ 18/07 soir)", coords: [43.452, 5.471], type: "depart" },
-  { nom: "Vienne (bivouac J1)", coords: [45.525, 4.874], type: "transit", trajet: "Gardanne → Vienne : 280 km · 2h47 (Google)" },
-  { nom: "Vosges / Hohrod (bivouac J2)", coords: [48.039, 7.138], type: "transit", trajet: "Vienne → Hohrod : 465 km · 4h47 (Google)" },
-  { nom: "Laacher See / Mendig (bivouac J3)", coords: [50.412, 7.271], type: "transit", trajet: "Hohrod → Mendig : 367 km · 4h07 (Google)" },
-  { nom: "Hambourg (bivouac J4)", coords: [53.549, 9.987], type: "transit", trajet: "Mendig → Hambourg : 515 km · 5h37 (Google)" },
-  { nom: "Esbjerg (bivouac J5)", coords: [55.476, 8.459], type: "transit", trajet: "Hambourg → Esbjerg : 269 km · 3h26 (Google)" },
-  { nom: "Hirtshals (ferry J6)", coords: [57.596, 9.974], type: "transit", trajet: "Esbjerg → Hirtshals : 341 km · 3h38 (Google) + Bulbjerg" },
+  { nom: "Gardanne (départ sam 18/07)", coords: [43.452, 5.471], type: "depart" },
+  { nom: "Ramasse / Jasseron — J1", coords: [46.2090, 5.3437], type: "transit", trajet: "J1 sam 18/07 · ~370 km · 3h40" },
+  { nom: "Heidelberg (forêt) — J2", coords: [49.3923, 8.7405], type: "transit", trajet: "J2 dim 19/07 · 551 km · 5h34" },
+  { nom: "Hanstedt (Lüneburger Heide) — J3", coords: [53.2559, 9.9853], type: "transit", trajet: "J3 lun 20/07 · 540 km · 5h38" },
+  { nom: "Ulbjerg Strand / Skals — J4", coords: [56.6234, 9.3140], type: "transit", trajet: "J4 mar 21/07 · 420 km · 4h34" },
+  { nom: "Hirtshals — J5", coords: [57.5870, 9.9668], type: "ferry", trajet: "J5 mer 22/07 · 138 km · 1h34" },
   { nom: "Kristiansand", coords: [58.146, 7.995], type: "zone", trajet: "Ferry Hirtshals→Kristiansand : 2h30" },
   { nom: "Stavanger / Lysefjord", coords: [58.969, 5.733], type: "zone", trajet: "~3h15 (~240 km) — à affiner (ferries)" },
   { nom: "Hardangerfjord", coords: [60.13, 6.55], type: "zone", trajet: "~3h30 — à affiner (toll-calculator.no)" },
@@ -453,8 +452,8 @@ const ZONES = [
 
 // ----- Trajet ALLER (temps réels Google Maps depuis coordonnées GPS exactes des spots Park4Night) -----
 const TRAJET_ALLER = [
-  { jour: "J1 · sam 18 juil (soir)", trajet: "Gardanne → Notre Dame des Conches (Ramasse, 01)", km: "~370 km · 3h40", activite: "Départ en soirée après le travail. Spot sur les hauteurs du Revermont, vue sur la Bresse. Gratuit, barbecue, calme.", note: "Spot en hauteur (accès plus simple par Ceyzériat). Hauteur limite 3,2m — OK pour le T5.", dodo: "Notre Dame des Conches, Jasseron/Ramasse (01250)", dodoLien: "https://park4night.com/fr/place/42493" },
-  { jour: "J2 · dim 19 juil", trajet: "Ramasse → Heidelberg (Wanderparkplatz Schwabenweg, DE)", km: "551 km · 5h34", activite: "Grosse étape de route. Parking en forêt avec départs de chemins, fontaine d'eau potable. Halte possible Colmar/Strasbourg en chemin.", note: "Passage frontière France → Allemagne. Gratuit, calme la nuit.", dodo: "Wanderparkplatz Schwabenweg, Heidelberg", dodoLien: "https://park4night.com/fr/place/365036" },
+  { jour: "J1 · sam 18 juil (après-midi/soir)", trajet: "Gardanne → Notre Dame des Conches (Ramasse, 01)", km: "~370 km · 3h40", activite: "Matinée de préparation du van et des affaires à la maison, départ en après-midi ou soirée. Spot sur les hauteurs du Revermont, vue sur la Bresse. Gratuit, barbecue, calme.", note: "Spot en hauteur (accès plus simple par Ceyzériat). Hauteur limite 3,2m — OK pour le T5.", dodo: "Notre Dame des Conches, Jasseron/Ramasse (01250)", dodoLien: "https://park4night.com/fr/place/42493" },
+  { jour: "J2 · dim 19 juil", trajet: "Ramasse → Heidelberg (Wanderparkplatz Schwabenweg, DE)", km: "551 km · 5h34", activite: "Grosse étape de route. Parking en forêt avec départs de chemins, fontaine d'eau potable.", note: "Passage frontière France → Allemagne. Gratuit, calme la nuit.", dodo: "Wanderparkplatz Schwabenweg, Heidelberg", dodoLien: "https://park4night.com/fr/place/365036" },
   { jour: "J3 · lun 20 juil", trajet: "Heidelberg → Hanstedt (Lüneburger Heide)", km: "540 km · 5h38", activite: "Arrivée en lisière de la lande de Lüneburg (Lüneburger Heide), grand espace naturel. Balade possible en fin de journée.", note: "", dodo: "Hanstedt (sud de Hambourg)", dodoLien: "https://park4night.com/fr/place/210877" },
   { jour: "J4 · mar 21 juil", trajet: "Hanstedt → Ulbjerg Strand / Skals (DK)", km: "420 km · 4h34", activite: "Arrivée au bord de l'eau à Ulbjerg Strand (fjord de Hjarbæk). Baignade / plage en arrivant.", note: "Passage frontière Allemagne → Danemark.", dodo: "Ulbjerg Strand, Skals", dodoLien: "https://park4night.com/fr/place/84766" },
   { jour: "J5 · mer 22 juil", trajet: "Skals → Hirtshals + ferry", km: "138 km · 1h34", activite: "Courte route le matin jusqu'au port. Ferry Hirtshals → Kristiansand (2h30) — l'aventure norvégienne commence.", note: "Étape volontairement courte : le ferry enchaîne derrière. Cabine à réserver.", dodo: "→ Embarquement ferry Hirtshals", dodoLien: "" },
@@ -616,27 +615,103 @@ function openZone(id){const z=document.getElementById("zone-"+id);if(!z.classLis
 // Carte avec pointillés + temps de trajet
 try{
   if(typeof L==='undefined')throw new Error('no leaflet');
-  const map=L.map('map',{scrollWheelZoom:false}).setView([60,8],5);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:12,attribution:'&copy; OpenStreetMap'}).addTo(map);
-  // tracé pointillé dans l'ordre du parcours
-  const latlngs=PARCOURS.map(p=>p.coords);
-  L.polyline(latlngs,{color:'#2a6f97',weight:2.5,dashArray:'7,8',opacity:.8}).addTo(map);
+
+  // ── Carte : zoom débloqué ──
+  const map=L.map('map',{
+    scrollWheelZoom:'center', // zoom à la molette centré sur la souris
+    maxZoom:18
+  }).setView([55,8],4);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap'
+  }).addTo(map);
+
+  // Message hint molette
+  const mapEl=document.getElementById('map');
+  mapEl.addEventListener('wheel',()=>{},{ passive:true });
+
+  // ── Marqueurs (transit + zones) ──
   const bounds=[];
-  PARCOURS.forEach((p,i)=>{
+  PARCOURS.forEach(p=>{
     const isZone=p.type==='zone', isDep=p.type==='depart';
     const cls=isZone?'zone-pin':'transit-pin';
-    const label=isZone?(ZONES.find(z=>Math.abs(z.coords[0]-p.coords[0])<.01)?.num||'•'):(isDep?'🏁':'•');
-    const icon=L.divIcon({html:`<div class="${cls}">${label}</div>`,className:'',iconSize:[isZone?30:22,isZone?30:22],iconAnchor:[isZone?15:11,isZone?15:11]});
+    const zoneMatch=ZONES.find(z=>Math.abs(z.coords[0]-p.coords[0])<.02&&Math.abs(z.coords[1]-p.coords[1])<.02);
+    const label=isZone?(zoneMatch?.num||'•'):(isDep?'🏁':'·');
+    const sz=isZone?30:22;
+    const icon=L.divIcon({html:`<div class="${cls}">${label}</div>`,className:'',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
     const m=L.marker(p.coords,{icon}).addTo(map);
     let pop=`<b>${p.nom}</b>`;
-    if(p.trajet)pop+=`<br>🚗 ${p.trajet}`;
-    const zoneMatch=ZONES.find(z=>Math.abs(z.coords[0]-p.coords[0])<.01 && Math.abs(z.coords[1]-p.coords[1])<.01);
-    if(zoneMatch)pop+=`<br><a href="#" onclick="openZone('${zoneMatch.id}');return false;">Ouvrir cette zone ↓</a>`;
+    if(p.trajet) pop+=`<br><span style="color:#5b6b73">🚗 ${p.trajet}</span>`;
+    if(zoneMatch) pop+=`<br><a href="#" onclick="openZone('${zoneMatch.id}');return false;" style="color:#2a6f97">Ouvrir cette zone ↓</a>`;
     m.bindPopup(pop);
-    if(zoneMatch)m.on('click',()=>openZone(zoneMatch.id));
+    if(zoneMatch) m.on('click',()=>openZone(zoneMatch.id));
     bounds.push(p.coords);
   });
   map.fitBounds(bounds,{padding:[35,35]});
+
+  // ── Couche repli : pointillés terrestres (remplacés par OSRM si succès) ──
+  const routeFallbackCoords=PARCOURS
+    .filter(p=>['depart','transit','ferry'].includes(p.type))
+    .map(p=>p.coords);
+  const fallbackLine=L.polyline(routeFallbackCoords,{
+    color:'#2a6f97',weight:2,dashArray:'6,8',opacity:.5
+  }).addTo(map);
+
+  // ── Tracé OSRM : vraie route (remplace les pointillés si succès) ──
+  // Décodeur de polyline Google (format OSRM)
+  function decodePolyline(str){
+    let idx=0,lat=0,lng=0,coords=[];
+    while(idx<str.length){
+      let b,shift=0,result=0;
+      do{b=str.charCodeAt(idx++)-63;result|=(b&0x1f)<<shift;shift+=5;}while(b>=0x20);
+      lat+=(result&1)?~(result>>1):(result>>1);
+      shift=0;result=0;
+      do{b=str.charCodeAt(idx++)-63;result|=(b&0x1f)<<shift;shift+=5;}while(b>=0x20);
+      lng+=(result&1)?~(result>>1):(result>>1);
+      coords.push([lat/1e5,lng/1e5]);
+    }
+    return coords;
+  }
+
+  // Points terrestres aller : depart + transit + ferry (sans les zones Norvège)
+  const terrestrePoints=PARCOURS.filter(p=>['depart','transit','ferry'].includes(p.type));
+  const terrestreWaypoints=terrestrePoints.map(p=>p.coords[1]+','+p.coords[0]).join(';');
+
+  // Points OSRM = route terrestre complète incluant Hirtshals (c'est de la route jusqu'au port)
+  const routePoints=PARCOURS.filter(p=>['depart','transit','ferry'].includes(p.type));
+  const routeWaypoints=routePoints.map(p=>p.coords[1]+','+p.coords[0]).join(';');
+
+  // Pointillé ferry : Hirtshals → Kristiansand
+  const ferry=PARCOURS.find(p=>p.type==='ferry');
+  const kristiansand=PARCOURS.find(p=>p.nom.includes('Kristiansand'));
+  if(ferry && kristiansand){
+    L.polyline([ferry.coords, kristiansand.coords],{
+      color:'#61a5c2', weight:2.5, dashArray:'4,8', opacity:.9
+    }).addTo(map);
+    // Ajout d'un mini label ⛴️ au milieu du ferry
+    const midLat=(ferry.coords[0]+kristiansand.coords[0])/2;
+    const midLng=(ferry.coords[1]+kristiansand.coords[1])/2;
+    L.marker([midLat,midLng],{
+      icon:L.divIcon({html:'<div style="font-size:18px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))">⛴️</div>',className:'',iconSize:[24,24],iconAnchor:[12,12]})
+    }).addTo(map).bindPopup('<b>Ferry Hirtshals → Kristiansand</b><br>2h30 · Fjord Line / Color Line');
+  }
+
+  const OSRM='https://router.project-osrm.org/route/v1/driving/';
+  fetch(`${OSRM}${routeWaypoints}?overview=full&geometries=polyline`)
+    .then(r=>r.json())
+    .then(data=>{
+      if(data.code!=='Ok') throw new Error('OSRM error');
+      const coords=decodePolyline(data.routes[0].geometry);
+      // Succès : on retire les pointillés et on trace la vraie route terrestre
+      map.removeLayer(fallbackLine);
+      L.polyline(coords,{color:'#1B4F72',weight:3,opacity:.85}).addTo(map);
+    })
+    .catch(()=>{
+      // Échec silencieux : les pointillés restent affichés
+      console.log('OSRM indisponible, tracé pointillé conservé');
+    });
+
 }catch(e){
   const el=document.getElementById('map');
   el.style.cssText='height:auto;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:16px';
