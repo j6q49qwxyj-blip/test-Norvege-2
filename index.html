@@ -45,6 +45,9 @@
 
   #map{height:480px;border-radius:16px;box-shadow:0 6px 24px rgba(22,66,91,.18);border:1px solid var(--ligne)}
 #map2{height:520px;border-radius:16px;box-shadow:0 6px 24px rgba(22,66,91,.18);border:1px solid var(--ligne)}
+.filt{cursor:pointer;user-select:none;padding:2px 7px;border-radius:7px;background:#eef3f6;transition:opacity .15s,background .15s}
+.filt:hover{background:#dde8ee}
+.filt.off{opacity:.4;text-decoration:line-through}
   .zone-pin{background:var(--fjord);color:#fff;border-radius:50%;width:30px;height:30px;display:flex;
     align-items:center;justify-content:center;font-weight:700;font-size:14px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4)}
   .transit-pin{background:#8a8f94;color:#fff;border-radius:50%;width:22px;height:22px;display:flex;
@@ -201,14 +204,22 @@
     <h2 class="section-title">🥾 Carte détaillée — randos & points</h2>
     <p class="section-sub">Randos avec trace GPX (violette, <b>rouge</b> si écartée) + marqueur au parking de départ ; routes scéniques (marqueur de départ) et points d'intérêt — toutes zones hors Lofoten. Sur un marqueur : <b>📍</b> ouvre le point sur Google Maps, <b>📄</b> ouvre la fiche complète. Marqueur rond : le <b>pictogramme</b> = type, la <b>couleur</b> = statut.</p>
     <div id="map2"></div>
-    <div class="legend-top">
-      <span><i class="dot" style="background:#7b2cbf"></i> Trace rando</span>
-      <span><i class="dot" style="background:#9d2226"></i> Trace/point écarté</span>
-      <span><i class="dot" style="background:#e8590c"></i> Route scénique</span>
+    <div class="legend-top" id="map2-filters">
+      <span class="filt on" data-f="randos">🥾 Randonnées</span>
+      <span class="filt on" data-f="scenic">🛣️ Routes scéniques</span>
+      <span class="filt on" data-f="aller">🚐 Trajet aller</span>
+      <span class="filt on" data-f="musee">🏛️ Musée / Patrimoine</span>
+      <span class="filt on" data-f="village">🏘️ Village / Ville</span>
+      <span class="filt on" data-f="vue">👁️ Point de vue</span>
+      <span class="filt on" data-f="bateau">⛴️ Bateau / Ferry</span>
+      <span class="filt on" data-f="activite">⭐ Activités</span>
+    </div>
+    <div class="legend-top" style="margin-top:5px;font-size:12px;color:#5b6b73">
+      <span>Clique une catégorie pour l'afficher/masquer &nbsp;·&nbsp; couleur = statut :</span>
       <span><i class="dot" style="background:#2d6a4f"></i> retenu</span>
       <span><i class="dot" style="background:#1565c0"></i> en option</span>
-      <span><i class="dot" style="background:#5e35b1"></i> si passage</span>
       <span><i class="dot" style="background:#bc6c25"></i> à étudier</span>
+      <span><i class="dot" style="background:#9d2226"></i> écarté</span>
     </div>
   </section>
 
@@ -346,10 +357,10 @@ const ZONES = [
     ],
     activites: [
 
-      { julienReview: true, statut: "retenu", nom: "Cascade Strandfossen à Odda", typeActivite: "Balade", accessibilite: "Tout public", duree: "30–45 min", detail: "Cascade accessible depuis le centre d'Odda (ville connue comme décor de la série Netflix Ragnarok). Courte balade au bord de l'eau.", remarque: "À combiner avec le musée de Tyssedal (10 min de route)", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
+      { julienReview: true, statut: "retenu", nom: "Cascade Strandfossen à Odda", typeActivite: "Balade", accessibilite: "Tout public", duree: "30–45 min", detail: "Cascade accessible depuis le centre d'Odda (ville connue comme décor de la série Netflix Ragnarok). Courte balade au bord de l'eau.", remarque: "À combiner avec le musée de Tyssedal (10 min de route) · Accès : 3 km · 30 min", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
       { julienReview: true, statut: "retenu", nom: "Musée de l'hydroélectricité à Tyssedal (kraftstasjon)", typeActivite: "Visite / Musée", accessibilite: "Tout public", duree: "1h30", detail: "Centrale hydroélectrique historique reconvertie en musée. Turbines Pelton visibles, histoire de l'aménagement hydraulique Hardanger.", remarque: "⚠️ Tarifs et horaires à vérifier — données inconnues", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
-      { julienReview: true, statut: "passage", nom: "Eidfjord — village et accès aux cascades", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Variable", detail: "Village d'Eidfjord sur le Hardangerfjord, point de départ pour Husedalen et Vøringsfossen.", remarque: "Surtout utile comme base pour Husedalen et Vøringsfossen", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
-      { julienReview: true, statut: "passage", nom: "Vøringsfossen — cascade de 182 m", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "20–30 min (sentier aménagé)", detail: "L'une des cascades les plus connues de Norvège, 182 m de chute dans une étroite gorge verdoyante.", remarque: "Sentier aménagé accessible à tous ; rando gorge (5 km) plus sportive", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
+      { julienReview: true, statut: "avoir", nom: "Eidfjord — village et accès aux cascades", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Variable", detail: "Village d'Eidfjord sur le Hardangerfjord, point de départ pour Husedalen et Vøringsfossen.", remarque: "Surtout utile comme base pour Husedalen et Vøringsfossen", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
+      { julienReview: true, statut: "avoir", nom: "Vøringsfossen — cascade de 182 m", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "20–30 min (sentier aménagé)", detail: "L'une des cascades les plus connues de Norvège, 182 m de chute dans une étroite gorge verdoyante.", remarque: "Sentier aménagé accessible à tous ; rando gorge (5 km) plus sportive", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
     ],
     enfants: [
     ],
@@ -367,10 +378,10 @@ const ZONES = [
       { julienReview: true, statut: "retenu", nom: "Visiter la ville de Bergen", typeActivite: "Visite ville", accessibilite: "Tout public", duree: "4h", detail: "Montée en funiculaire Fløibanen (vue panoramique), descente à pied, traversée des quartiers en bois jusqu'au quai hanséatique de Bryggen (classé UNESCO). Marché aux poissons sur le port.", remarque: "Parking recommandé : 'bygarasjen' sur Google Maps", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
     ],
     enfants: [
-      { statut: "retenu", nom: "Høyt & Lavt — accrobranche", detail: "Le plus grand parc accrobranche de l'Ouest norvégien (Nesttun) : 10 parcours, 120+ obstacles, 20+ tyroliennes. Parcours adaptés dès 3 ans.", infos: "~80-100€ · Charlie ✓ Éole ✓ (dès 3 ans)", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://hoytlavt.no/en/bergen/"}] },
-      { statut: "retenu", nom: "Fløibanen + forêt de trolls", detail: "Funiculaire (montée 7 min) jusqu'au Mont Fløyen : sentiers doux, aire de jeux, forêt de trolls pour les plus jeunes.", infos: "~50€ · Charlie ✓ Éole ✓", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.floyen.no/en/"}] },
+      { statut: "avoir", nom: "Høyt & Lavt — accrobranche", detail: "Le plus grand parc accrobranche de l'Ouest norvégien (Nesttun) : 10 parcours, 120+ obstacles, 20+ tyroliennes. Parcours adaptés dès 3 ans.", infos: "~80-100€ · Charlie ✓ Éole ✓ (dès 3 ans)", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://hoytlavt.no/en/bergen/"}] },
+      { statut: "avoir", nom: "Fløibanen + forêt de trolls", detail: "Funiculaire (montée 7 min) jusqu'au Mont Fløyen : sentiers doux, aire de jeux, forêt de trolls pour les plus jeunes.", infos: "~50€ · Charlie ✓ Éole ✓", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.floyen.no/en/"}] },
       { statut: "etude", nom: "Akvariet (aquarium)", detail: "Nourrissage des pingouins, spectacles de phoques, bassins tactiles. Bonne option jour de pluie.", infos: "~60€ · option pluie", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.akvariet.no/en/"}] },
-      { marionReview: true, statut: "etude", nom: "Musée VilVite — centre scientifique interactif (Bergen)", typeActivite: "Visite / Musée", accessibilite: "Tout public", duree: "2-4h (sortie/retour libre)", detail: "Centre scientifique interactif situé près de la gare de Bergen. Très manipulatif et ludique : les enfants peuvent y passer une grande partie de la journée, et le billet permet de sortir puis revenir librement. Cité comme une pépite et un incontournable de Bergen en famille — bonne option jour de pluie ou dernier jour en ville.", remarque: "Ajouté par Marion", sources: [{type:"blog", nom:"En route les enfants", url:"https://enroutelesenfants.fr/voyage-norvege-famille-15-jours/"}] },
+      { marionReview: true, statut: "retenu", nom: "Musée VilVite — centre scientifique interactif (Bergen)", typeActivite: "Visite / Musée", accessibilite: "Tout public", duree: "2-4h (sortie/retour libre)", detail: "Centre scientifique interactif situé près de la gare de Bergen. Très manipulatif et ludique : les enfants peuvent y passer une grande partie de la journée, et le billet permet de sortir puis revenir librement. Cité comme une pépite et un incontournable de Bergen en famille — bonne option jour de pluie ou dernier jour en ville.", remarque: "Ajouté par Marion", sources: [{type:"blog", nom:"En route les enfants", url:"https://enroutelesenfants.fr/voyage-norvege-famille-15-jours/"}] },
     ],
     routes: [
       ],
@@ -384,13 +395,13 @@ const ZONES = [
 
     ],
     activites: [
-      { julienReview: true, statut: "passage", nom: "Borgund — stavkirke (XIIe siecle)", typeActivite: "Visite / Patrimoine", accessibilite: "Tout public", duree: "1h", detail: "Stavkirke datant de 1150, une des mieux conservees de Norvege. Sculptures de dragons, tetes sculptees. Acces via le tunnel de Laerdal (25 km, plus long tunnel routier du monde).", remarque: "Acces via le tunnel de Laerdal (juste a cote de Flam) — impressionnant pour les enfants. NB : la source le cite comme 1er arret car elle faisait le trajet en sens inverse", julienReview: true, sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}] },
-      { statut: "retenu", nom: "Bateau Nærøyfjord (Flåm→Gudvangen)", detail: "Traversée du fjord le plus étroit, classé UNESCO. Cascades, falaises. Van garé à Flåm, retour en bus.", infos: "~2h navigation", sources: [{type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=200s"}] },
+      { julienReview: true, statut: "avoir", nom: "Borgund — stavkirke (XIIe siecle)", typeActivite: "Visite / Patrimoine", accessibilite: "Tout public", duree: "1h", detail: "Stavkirke datant de 1150, une des mieux conservees de Norvege. Sculptures de dragons, tetes sculptees. Acces via le tunnel de Laerdal (25 km, plus long tunnel routier du monde).", remarque: "Acces via le tunnel de Laerdal (juste a cote de Flam) — impressionnant pour les enfants. NB : la source le cite comme 1er arret car elle faisait le trajet en sens inverse", julienReview: true, sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}] },
+      { statut: "avoir", nom: "Bateau Nærøyfjord (Flåm→Gudvangen)", detail: "Traversée du fjord le plus étroit, classé UNESCO. Cascades, falaises. Van garé à Flåm, retour en bus.", infos: "~2h navigation", sources: [{type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=200s"}] },
 
     ],
     enfants: [
       { julienReview: true, statut: "retenu", nom: "Village viking Njardarheimr (Gudvangen)", typeActivite: "Visite / Patrimoine", accessibilite: "Tout public", duree: "Visite guidée 45 min incluse", detail: "Village viking reconstitué au bord du Nærøyfjord, immersion réussie : habitants costumés, ateliers, tir à l'arc, lancer de hache. Visite guidée de 45 min incluse.", infos: "~58€ (105 NOK/enfant, 235 NOK/adulte) · Charlie ✓ Éole ✓", remarque: "Très sympa avec les enfants — beaucoup d'activités à faire sur place", sources: [{type:"video", nom:"Les Rolling Trippers", url:"https://youtu.be/1pitiMQbYlA?t=249"}, {type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=213s"}] },
-      { statut: "etude", nom: "Train Flåmsbana", detail: "Train rétro Flåm→Myrdal, 20 tunnels, arrêt cascade Kjosfossen. Émerveille les enfants MAIS avis clivant (cher pour 1h, jugé « attrape-touristes » par des blogs van).", infos: "~128€ A/R famille · enfant 4-15 ans demi-tarif, -4 ans gratuit", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.flamsbana.no"}] },
+      { statut: "ecarte", nom: "Train Flåmsbana", detail: "Train rétro Flåm→Myrdal, 20 tunnels, arrêt cascade Kjosfossen. Émerveille les enfants MAIS avis clivant (cher pour 1h, jugé « attrape-touristes » par des blogs van).", infos: "~128€ A/R famille · enfant 4-15 ans demi-tarif, -4 ans gratuit", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.flamsbana.no"}] },
     ],
     routes: [
       { julienReview: true, statut: "retenu", nom: "Route scénique Aurlandsfjellet (Stegastein)", typeActivite: "Route scénique", accessibilite: "Tout public", duree: "2–3h (route + haltes)", detail: "Route panoramique qui monte sur un plateau de toundra depuis le Sognefjord. Paysage nordique minéral et souvent enneigé en bord de route même en été. Bivouac possible sur le plateau. Belvédère de Stegastein — plateforme en porte-à-faux à 650m de hauteur.", remarque: "Bivouac sur le plateau possible et recommandé. Stegastein = arrêt clé en descente", infos: "Oui — le T5 passe sans souci", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}, {type:"video", nom:"Les Voyages de Taco", url:"https://youtu.be/coAxShKTtjA?t=81"}, {type:"video", nom:"Les aVANturiers", url:"https://youtu.be/mOJl0FNdJIk?t=209"}] },
@@ -403,7 +414,7 @@ const ZONES = [
     randos: [
       { julienReview: true, statut: "retenu", nom: "Raudmelen — sommet panoramique (Balestrand)", typeActivite: "Randonnée", accessibilite: "Tout public", duree: "10km, 900m de D+", detail: "Ascension du Raudmelen, sommet panoramique dominant le Sognefjord depuis Balestrand. 10 km et 900 m de dénivelé, mais sentier très bien aménagé (coté facile par le blog) et possibilité de raccourcir le parcours.", remarque: "Possibilité de racourcir, très bien aménagée donc noté facile par le blog", sources: [{type:"blog", nom:"Novo-Monde", url:"https://www.novo-monde.com/randonnee-raudmelen-balestrand-sognefjord/"}] },
       { julienReview: true, statut: "retenu", nom: "Nigardsbreen — approche", typeActivite: "Randonnée / Glacier", accessibilite: "Tout public", duree: "~4 km, ~150 m D+, 2-3h (facile à modéré)", detail: "Approche du glacier Nigardsbreen, langue du Jostedalsbreen, par une balade familiale jusqu'au lac glaciaire turquoise. Le sentier peut démarrer du visitor center (compter 2-3 km de plus, le long d'une rivière très agréable) ou du parking supérieur. Le dernier tronçon jusqu'au pied du glacier peut aussi se faire en bateau sur le lac. Route d'accès déjà spectaculaire.", infos: "Visitor center avec tablettes pédagogiques en français · fréquentation moyenne-élevée", remarque: "Très bien pour les enfants : visitor center ludique + option bateau jusqu'au glacier", sources: [{type:"video", nom:"Les Rolling Trippers", url:"https://youtu.be/oebK6COP5E4?t=164"}, {type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=375s"}] },
-      { statut: "retenu", nom: "Briksdalen–Oldeskaret", detail: "Ancienne route restaurée, cascades, vues sur la vallée d'Oldedalen. Pendant que la famille fait le trollcar + lac glaciaire.", infos: "8,5 km · 1 042 m D+ · 5h30-6h · difficile, bien balisé · fréquentation faible-moyenne · AllTrails 4,7/5", sources: [{type:"avis", nom:"AllTrails", url:"https://www.alltrails.com/fr/randonnee/norway/vestland/briksdalen-oldeskaret"}] },
+      { statut: "avoir", nom: "Briksdalen–Oldeskaret", detail: "Ancienne route restaurée, cascades, vues sur la vallée d'Oldedalen. Pendant que la famille fait le trollcar + lac glaciaire.", infos: "8,5 km · 1 042 m D+ · 5h30-6h · difficile, bien balisé · fréquentation faible-moyenne · AllTrails 4,7/5", sources: [{type:"avis", nom:"AllTrails", url:"https://www.alltrails.com/fr/randonnee/norway/vestland/briksdalen-oldeskaret"}] },
       { statut: "etude", nom: "Kattanakken–Briksdalen", detail: "Plusieurs bras du glacier, lacs verts, passages avec chaînes. Option longue et engagée.", infos: "10,5 km · 1 307 m D+ · journée · très difficile, déconseillé si vertige", sources: [{type:"avis", nom:"AllTrails", url:"https://www.alltrails.com/fr/randonnee/norway/vestland/kattanakken-briksdalen"}] },
       { julienReview: true, statut: "retenu", nom: "Briksdalbreen — glacier et lac glaciaire (vue d'ensemble)", typeActivite: "Balade / Glacier", accessibilite: "Tout public", duree: "6–7 km, 250 m D+, ~1h20", detail: "Randonnée courte jusqu'au pied du glacier Briksdal (bras du Jostedalsbreen). Lac glaciaire d'un bleu intense. Possibilité de monter en Trollcar (petit train-tracteur, payant). Vue sur la cascade Volefossen.", remarque: "Super camping à côté (douches) — à planifier pour la lessive. Éviter les heures de croisières", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/03/randonnees-norvege-famille/"}, {type:"video", nom:"Les Rolling Trippers", url:"https://youtu.be/hci_uW7J_YY?t=569"}] },
     ],
@@ -412,14 +423,14 @@ const ZONES = [
       { julienReview: true, statut: "retenu", nom: "Glacier Jostedalsbreen — Boyabreen viewpoint", typeActivite: "Balade / Point de vue", accessibilite: "Tout public", duree: "3h (aller-retour + contemplation)", detail: "Point de vue sur le glacier Boyabreen, bras du Jostedalsbreen (plus grand glacier d'Europe continentale). Parking quasi au bord du lac glaciaire — détour minime depuis la route principale. Eau turquoise irréelle.", remarque: "Possibilité de déjeuner au refuge avec vue sur le glacier", infos: "Gratuit · arrêt rapide", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}, {type:"video", nom:"Les aVANturiers", url:"https://youtu.be/mOJl0FNdJIk?t=234"}] },
     ],
     enfants: [
-      { statut: "retenu", nom: "Lac glaciaire de Briksdal", detail: "Eau bleue intense où jouer, cascades, marqueurs historiques du recul du glacier (pédagogique).", infos: "Inclus trollcar · Charlie ✓ Éole ✓", lien: "", lienType: "officiel", aCompleter: true },
-      { statut: "etude", nom: "Lac Bondhusvatnet", detail: "22 min de marche facile jusqu'à un lac avec barque, prolongeable vers le glacier.", infos: "Gratuit · facile", sources: [{type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=274s"}] },
+      { statut: "avoir", nom: "Lac glaciaire de Briksdal", detail: "Eau bleue intense où jouer, cascades, marqueurs historiques du recul du glacier (pédagogique).", infos: "Inclus trollcar · Charlie ✓ Éole ✓", lien: "", lienType: "officiel", aCompleter: true },
+      { statut: "etude", nom: "Lac Bondhusvatnet", detail: "22 min de marche facile jusqu'à un lac avec barque, prolongeable vers le glacier. (Parking · +100 m D+ · 20-30 min.)", infos: "Gratuit · facile", sources: [{type:"video", nom:"Vidéo", url:"https://www.youtube.com/watch?v=J0gv6N2njqM&t=274s"}] },
     ],
     routes: [
       { statut: "etude", nom: "Gamle Strynefjellsvegen", detail: "Route historique de cols enneigés, lacs.", infos: "À étudier", sources: [{type:"officiel", nom:"Routes nationales", url:"https://www.nasjonaleturistveger.no/fr/routes/gamle-strynefjellsvegen"}] },
-      { julienReview: true, statut: "passage", nom: "Solvorn — village pittoresque sur le Sognefjord", typeActivite: "Visite", accessibilite: "Tout public", duree: "1–2h", detail: "Petit village sur les rives du Sognefjord avec des cabanes traditionnelles colorées en jaune et rouge, bateaux amarrés et ruelles pavées. Souvent cité parmi les plus beaux villages des fjords.", remarque: "À combiner avec la stavkirke d'Urnes (ferry sans voiture depuis Solvorn)", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
-      { julienReview: true, statut: "passage", nom: "Lac Oldevatnet — lac glaciaire turquoise", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Balade libre au bord du lac", detail: "Lac aux eaux d'un bleu profond alimentées par la fonte du Jostedalsbreen. Entouré de pittoresques maisons nordiques, de cascades et de montagnes.", remarque: "Bivouac en bord de lac possible — belle étape de nuit avant Briksdalbreen", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
-      { julienReview: true, statut: "passage", nom: "Hjelle — coup de cœur (vallée de Stryn)", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Balade libre", detail: "Lieu décrit comme le coup de cœur absolu de noscurieuxvoyageurs.com. Situé dans la vallée de Stryn, entre lac Oldevatnet et Geiranger.", remarque: "Bivouac fortement recommandé — 'réveil féérique' selon la source", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
+      { julienReview: true, statut: "avoir", nom: "Solvorn — village pittoresque sur le Sognefjord", typeActivite: "Visite", accessibilite: "Tout public", duree: "1–2h", detail: "Petit village sur les rives du Sognefjord avec des cabanes traditionnelles colorées en jaune et rouge, bateaux amarrés et ruelles pavées. Souvent cité parmi les plus beaux villages des fjords.", remarque: "À combiner avec la stavkirke d'Urnes (ferry sans voiture depuis Solvorn)", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
+      { julienReview: true, statut: "avoir", nom: "Lac Oldevatnet — lac glaciaire turquoise", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Balade libre au bord du lac", detail: "Lac aux eaux d'un bleu profond alimentées par la fonte du Jostedalsbreen. Entouré de pittoresques maisons nordiques, de cascades et de montagnes.", remarque: "Bivouac en bord de lac possible — belle étape de nuit avant Briksdalbreen", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
+      { julienReview: true, statut: "avoir", nom: "Hjelle — coup de cœur (vallée de Stryn)", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Balade libre", detail: "Lieu décrit comme le coup de cœur absolu de noscurieuxvoyageurs.com. Situé dans la vallée de Stryn, entre lac Oldevatnet et Geiranger.", remarque: "Bivouac fortement recommandé — 'réveil féérique' selon la source", sources: [{type:"blog", nom:"Nos Curieux Voyageurs", url:"https://noscurieuxvoyageurs.com/3-semaines-en-van-a-travers-les-fjords-norvegiens/"}] },
     ],
   },
   {
@@ -430,7 +441,7 @@ const ZONES = [
       { julienReview: true, statut: "retenu", nom: "Hamnanova — vue sur le Kjøsnesfjord (Jølster)", typeActivite: "Randonnée", accessibilite: "Tout public", duree: "3,6km, 350m , 2h", detail: "Randonnée courte et facile vers le point de vue de Hamnanova, avec une belle vue sur le fjord. 3,6 km, 350 m de dénivelé, environ 2h. Accessible en famille.", remarque: "Randonée très facile avec une belle vue", sources: [{type:"blog", nom:"Novo-Monde", url:"https://www.novo-monde.com/randonnee-hamnanova-norvege-fjord/"}] },],
     activites: [],
     enfants: [
-      { statut: "retenu", nom: "Loen Skylift", detail: "L'un des téléphériques les plus raides du monde — 0 à 1 011m en 5 min. Vue sur Nordfjord + Jostedalsbreen, restaurant et balades en haut.", infos: "~100-130€ (billet famille 2 ad+2 enf 6-15 ans) · Charlie ✓ Éole ✓", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.loenskylift.com"}] },
+      { statut: "avoir", nom: "Loen Skylift", detail: "L'un des téléphériques les plus raides du monde — 0 à 1 011m en 5 min. Vue sur Nordfjord + Jostedalsbreen, restaurant et balades en haut.", infos: "~100-130€ (billet famille 2 ad+2 enf 6-15 ans) · Charlie ✓ Éole ✓", aCompleter: true, sources: [{type:"officiel", nom:"Source", url:"https://www.loenskylift.com"}] },
     ],
     routes: [],
   },
@@ -446,13 +457,13 @@ const ZONES = [
       { julienReview: true, statut: "retenu", nom: "Visiter le village de Geiranger", typeActivite: "Visite ville", accessibilite: "Tout public", duree: "2h", detail: "Petit port pittoresque au fond du fjord classé UNESCO. Très fréquenté en haute saison par les paquebots — arriver tôt le matin ou vérifier l'application cruise-radar.", remarque: "Vérifier l'appli bateaux de croisière avant d'y aller", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
       { julienReview: true, statut: "retenu", nom: "Fjordsenter — musée d'interprétation du Geirangerfjord", typeActivite: "Visite / Musée", accessibilite: "Tout public", duree: "1h30", detail: "Centre d'interprétation du Geirangerfjord (patrimoine UNESCO). Explique la formation géologique, les risques naturels. Calme hors saison croisière.", remarque: "Convient aux enfants curieux ; peut être trop calme pour les tout-petits", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
       { julienReview: true, statut: "avoir", nom: "Geirangerfjord — panoramas et belvédères", typeActivite: "Visite / Point de vue", accessibilite: "Tout public", duree: "Variable", detail: "Fjord classé UNESCO de 15 km. Belvédère de l'Aigle (Ørnesvingen) — vue à 180° sur le fjord. Cascades des Sept Sœurs et Fiancée du Marié.", remarque: "Vérifier l'appli bateaux de croisière avant d'aller au village", sources: [{type:"blog", nom:"Arthur & Thibaut", url:"https://www.lesaventuresdarthuretthibaut.com/2025/04/norvege-que-voir-et-que-faire-dans-la-region-des-fjords/"}] },
-      { julienReview: true, statut: "passage", nom: "Gudbrandsjuvet — gorge et passerelle au-dessus du torrent", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "15–30 min", detail: "Gorge profonde de 20–25 m creusée par la rivière Valldøla. Passerelle moderne suspendue pour une vue plongeante sur les eaux bouillonnantes.", remarque: "Arrêt de 20 min max sur la route Geiranger → Trollstigen", sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}] },
+      { julienReview: true, statut: "avoir", nom: "Gudbrandsjuvet — gorge et passerelle au-dessus du torrent", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "15–30 min", detail: "Gorge profonde de 20–25 m creusée par la rivière Valldøla. Passerelle moderne suspendue pour une vue plongeante sur les eaux bouillonnantes.", remarque: "Arrêt de 20 min max sur la route Geiranger → Trollstigen", sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}] },
     ],
     enfants: [
 
     ],
     routes: [
-      { statut: "retenu", nom: "Geiranger–Trollstigen", detail: "Route majestueuse, arrivée spectaculaire sur Geiranger. Trollstigen rouvert en 2026.", infos: "Incontournable", sources: [{type:"officiel", nom:"Routes nationales", url:"https://www.nasjonaleturistveger.no/fr/routes/geiranger-trollstigen"}] },
+      { statut: "avoir", nom: "Geiranger–Trollstigen", detail: "Route majestueuse, arrivée spectaculaire sur Geiranger. Trollstigen rouvert en 2026.", infos: "Incontournable", sources: [{type:"officiel", nom:"Routes nationales", url:"https://www.nasjonaleturistveger.no/fr/routes/geiranger-trollstigen"}] },
     ],
   },
   {
@@ -468,7 +479,7 @@ const ZONES = [
 
     ],
     routes: [
-      { julienReview: true, marionReview: true, statut: "passage", nom: "Route de l'Atlantique (Atlanterhavsveien)", typeActivite: "Route scénique", accessibilite: "Tout public", duree: "1h (10 km + haltes)", detail: "Route de 10 km classée 'construction norvégienne du siècle' (2005). Relie le continent à plusieurs îles via des ponts courbés enjambant l'Atlantique. Photogénique mais avis divisés.", remarque: "Avis divisés — à faire si sur passage mais pas un détour de 2h", sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}, {type:"video", nom:"Les Voyages de Taco", url:"https://youtu.be/coAxShKTtjA?t=582"}] },
+      { julienReview: true, marionReview: true, statut: "avoir", nom: "Route de l'Atlantique (Atlanterhavsveien)", typeActivite: "Route scénique", accessibilite: "Tout public", duree: "1h (10 km + haltes)", detail: "Route de 10 km classée 'construction norvégienne du siècle' (2005). Relie le continent à plusieurs îles via des ponts courbés enjambant l'Atlantique. Photogénique mais avis divisés.", remarque: "Avis divisés — à faire si sur passage mais pas un détour de 2h", sources: [{type:"blog", nom:"Bakpoki", url:"https://www.bakpoki.com/roadtrip-en-norvege/"}, {type:"video", nom:"Les Voyages de Taco", url:"https://youtu.be/coAxShKTtjA?t=582"}] },
     ],
   },
   {
@@ -480,7 +491,7 @@ const ZONES = [
     ],
     activites: [
       { julienReview: true, statut: "retenu", nom: "Åndalsnes — village alpin, base de randonnées", typeActivite: "Point de vue", accessibilite: "Tout public", duree: "Variable", detail: "Village alpin en bout du Romsdalsfjord, au pied de montagnes spectaculaires. Base idéale pour les randonnées des environs, dont le Romsdalseggen.", remarque: "⚠️ Randonnées spécifiques à rechercher — Romsdalseggen comme piste à creuser", sources: [{type:"blog", nom:"Bestjobers", url:"https://www.bestjobersblog.com/road-trip-norvege-fjords/"}] },
-      { julienReview: true, statut: "passage", nom: "Ferme d'alpage Renndolsetra", typeActivite: "Balade", accessibilite: "Tout public", duree: "Variable", detail: "Ferme d'alpage traditionnelle entre Åndalsnes et Dovrefjell. Concept de seter (alpage) typique avec animaux et paysage de prairie montagnardes.", remarque: "⚠️ Données insuffisantes dans la source — à compléter", sources: [{type:"blog", nom:"Bestjobers", url:"https://www.bestjobersblog.com/road-trip-norvege-fjords/"}] },
+      { julienReview: true, statut: "avoir", nom: "Ferme d'alpage Renndolsetra", typeActivite: "Balade", accessibilite: "Tout public", duree: "Variable", detail: "Ferme d'alpage traditionnelle entre Åndalsnes et Dovrefjell. Concept de seter (alpage) typique avec animaux et paysage de prairie montagnardes.", remarque: "⚠️ Données insuffisantes dans la source — à compléter", sources: [{type:"blog", nom:"Bestjobers", url:"https://www.bestjobersblog.com/road-trip-norvege-fjords/"}] },
     ],
     enfants: [],
     routes: [
@@ -528,7 +539,7 @@ const ZONES = [
       { julienReview: true, statut: "retenu", nom: "Haheiå — vue panoramique", typeActivite: "Randonnée", accessibilite: "Tout public", duree: "6 km, D+470 m, ~1h45", detail: "Randonnée aux Lofoten menant à un sommet offrant une vue sublime sur l'archipel. Montée de 400 m de dénivelé sur 4 km. Depuis le sommet, on aperçoit d'autres sentiers dont celui menant au village de Moskenesøya.", remarque: "Seulement si on pousse jusqu'aux Lofoten (détour majeur — voir intro de zone)", sources: [{type:"blog", nom:"Wild Rosemary's", url:"https://wildrosemarys.fr/plus-belles-randonnees-norvege/"}] }
     ],
     activites: [
-      { julienReview: true, statut: "passage", nom: "Île de Vega (élans)", typeActivite: "Point de vue / Faune", accessibilite: "Tout public", duree: "Variable", detail: "Île de Vega, au sud des Lofoten, où les aVANturiers ont vu leurs premiers élans. Patrimoine UNESCO (paysage culturel, tradition de récolte du duvet d'eider).", remarque: "Très au nord — seulement si extension Lofoten", sources: [{type:"video", nom:"Les aVANturiers", url:"https://youtu.be/mOJl0FNdJIk?t=389"}] },],
+      { julienReview: true, statut: "avoir", nom: "Île de Vega (élans)", typeActivite: "Point de vue / Faune", accessibilite: "Tout public", duree: "Variable", detail: "Île de Vega, au sud des Lofoten, où les aVANturiers ont vu leurs premiers élans. Patrimoine UNESCO (paysage culturel, tradition de récolte du duvet d'eider).", remarque: "Très au nord — seulement si extension Lofoten", sources: [{type:"video", nom:"Les aVANturiers", url:"https://youtu.be/mOJl0FNdJIk?t=389"}] },],
     enfants: [],
     routes: [],
   },
@@ -951,7 +962,9 @@ try{(function(){
     telepherique:'<path d="M-13,-10 L13,-7" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M1,-8.5 L1,-3" stroke="#fff" stroke-width="2"/><rect x="-7" y="-3" width="16" height="11" rx="2" fill="#fff"/>',
     sensation:'<path d="M3,-13 L-6,2 L0,2 L-3,13 L9,-3 L2,-3 Z" fill="#fff"/>',
     famille:'<circle r="11" fill="none" stroke="#fff" stroke-width="2"/><g stroke="#fff" stroke-width="1.5"><path d="M-11,0 L11,0"/><path d="M0,-11 L0,11"/><path d="M-7.8,-7.8 L7.8,7.8"/><path d="M-7.8,7.8 L7.8,-7.8"/></g><circle r="2.3" fill="#fff"/><path d="M-5,9 L-8,14 M5,9 L8,14 M-9,14 L9,14" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>',
-    route:'<path d="M-8,12 C-2,5 2,-5 8,-12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M-8,12 C-2,5 2,-5 8,-12" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1" stroke-dasharray="2,3"/>'
+    route:'<path d="M-8,12 C-2,5 2,-5 8,-12" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M-8,12 C-2,5 2,-5 8,-12" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1" stroke-dasharray="2,3"/>',
+    activite:'<path d="M0,-12 L2.82,-3.88 L11.4,-3.7 L4.57,1.48 L7.05,9.7 L0,4.8 L-7.05,9.7 L-4.57,1.48 L-11.4,-3.7 L-2.82,-3.88 Z" fill="#fff"/>',
+    van:'<path d="M-13,2 L-13,-5 Q-13,-7 -11,-7 L5,-7 Q7,-7 8.5,-5 L13,-1.5 L13,2 Z" fill="#fff"/><rect x="-10.5" y="-5" width="6.5" height="4.2" rx="1" fill="#2a6f97"/><path d="M6.2,-5.6 L11,-1.7 L7,-1.7 Z" fill="#2a6f97"/><circle cx="-6.5" cy="3.4" r="3" fill="#fff"/><circle cx="-6.5" cy="3.4" r="1.2" fill="#2a6f97"/><circle cx="7" cy="3.4" r="3" fill="#fff"/><circle cx="7" cy="3.4" r="1.2" fill="#2a6f97"/>'
   };
   function familyOf(type,nom){
     const s=((type||'')+' '+(nom||'')).toLowerCase();
@@ -976,15 +989,18 @@ try{(function(){
   const DOC_SVG='<svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:-3px"><path fill="none" stroke="#2b6e8f" stroke-width="1.7" d="M6.8 2.9h6l4.4 4.4v13.8H6.8zM12.8 3.2v4.4h4.4M9 12h6M9 15h6"/></svg>';
   function actions(lat,lon,act,gmap){var url=gmap||gnav(lat,lon);var h='<div style="margin-top:7px;display:flex;gap:14px;align-items:center">';h+='<a href="'+url+'" target="_blank" rel="noopener" title="Ouvrir dans Google Maps">'+PIN_SVG+'</a>';if(act){h+='<a href="#" onclick="openActivite(\''+slug(act.nom)+'\');return false" title="Voir la fiche complète">'+DOC_SVG+'</a>';}h+='</div>';return h;}
   function hav(a,b){var R=6371000,r=Math.PI/180,d1=(b[0]-a[0])*r,d2=(b[1]-a[1])*r;var x=Math.sin(d1/2)*Math.sin(d1/2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(d2/2)*Math.sin(d2/2);return 2*R*Math.asin(Math.sqrt(x));}
-  function drawTrace(pts,color,nom){if(!pts||!pts.length)return;var seg=[pts[0]];function flush(){if(seg.length>1)L.polyline(seg,{color:color,weight:4,opacity:0.9,lineJoin:'round'}).bindTooltip(nom,{sticky:true}).addTo(map2);}for(var k=1;k<pts.length;k++){if(hav(pts[k-1],pts[k])>900){flush();seg=[pts[k]];}else seg.push(pts[k]);}flush();}
+  function drawTrace(pts,color,nom,grp){if(!pts||!pts.length)return;var seg=[pts[0]];function flush(){if(seg.length>1)L.polyline(seg,{color:color,weight:4,opacity:0.9,lineJoin:'round'}).bindTooltip(nom,{sticky:true}).addTo(grp||map2);}for(var k=1;k<pts.length;k++){if(hav(pts[k-1],pts[k])>900){flush();seg=[pts[k]];}else seg.push(pts[k]);}flush();}
   const bounds=[];
+  const LG={randos:L.layerGroup(),scenic:L.layerGroup(),aller:L.layerGroup(),musee:L.layerGroup(),village:L.layerGroup(),vue:L.layerGroup(),bateau:L.layerGroup(),activite:L.layerGroup()};
+  Object.keys(LG).forEach(k=>LG[k].addTo(map2));
+  function catOf(fam){if(fam==='musee')return 'musee';if(fam==='village')return 'village';if(fam==='bateau')return 'bateau';if(['activite','telepherique','sensation','famille'].includes(fam))return 'activite';return 'vue';}
 
   // ── Routes scéniques (réutilise SCENIC_ROUTES de la carte 1) ──
   SCENIC_ROUTES.forEach(r=>{
     const color=r.hl?'#e8590c':'#0c8599', weight=r.hl?4:3.5, opacity=r.hl?0.9:0.85;
-    r.s.forEach(seg=>{ L.polyline(seg,{color,weight,opacity,lineJoin:'round'}).bindTooltip(r.n+' — route scénique',{sticky:true}).addTo(map2); });
+    r.s.forEach(seg=>{ L.polyline(seg,{color,weight,opacity,lineJoin:'round'}).bindTooltip(r.n+' — route scénique',{sticky:true}).addTo(LG.scenic); });
     const st=r.s[0][0];
-    L.marker(st,{icon:roundIcon('route', r.hl?'#e8590c':'#0c8599')}).addTo(map2)
+    L.marker(st,{icon:roundIcon('route', r.hl?'#e8590c':'#0c8599')}).addTo(LG.scenic)
       .bindPopup('<div style="min-width:175px"><b>'+r.n+'</b><br><span style="color:#666">Route scénique nationale</span>'+actions(st[0],st[1],null)+'</div>');
   });
 
@@ -1001,9 +1017,9 @@ try{(function(){
     const duree=(act&&act.duree)?act.duree:'—';
     const color=STATUT_COLOR[statut]||'#2a6f97';
     const traceColor=(statut==='ecarte')?'#9d2226':'#7b2cbf';
-    drawTrace(r.t,traceColor,nom);
+    drawTrace(r.t,traceColor,nom,LG.randos);
     const p=r.p;
-    L.marker(p,{icon:roundIcon('rando',color)}).addTo(map2)
+    L.marker(p,{icon:roundIcon('rando',color)}).addTo(LG.randos)
       .bindPopup('<div style="min-width:190px"><b>'+nom+'</b><br><span style="color:#555;font-size:12px">'+duree+'</span>'+actions(p[0],p[1],act)+'</div>');
     bounds.push(p);
   });
@@ -1018,21 +1034,21 @@ try{(function(){
     {nom:'Vøringsfossen — cascade (182 m)', fam:'vue', match:'Vøringsfossen', statut:'passage', lat:60.42657, lon:7.25147, gmap:'https://maps.app.goo.gl/DYtKvKUdaHD47qEN7'},
     {nom:'Cascade Strandfossen (Odda)', fam:'vue', match:'Strandfossen', statut:'passage', lat:60.02472, lon:6.54029, gmap:'https://maps.app.goo.gl/BTfNokr1WqwxZRB87', note:'Accès : 3 km · 30 min depuis la route'},
     {nom:'Bergen — Bryggen (vieux quai)', fam:'village', match:'la ville de Bergen', statut:'retenu', lat:60.39757, lon:5.32455, gmap:'https://maps.app.goo.gl/abZLJ4LRATxKvgKv9'},
-    {nom:'Akvariet (aquarium, Bergen)', fam:'famille', match:'Akvariet', statut:'etude', lat:60.39969, lon:5.30337, gmap:'https://maps.app.goo.gl/oR5JYoj9wezytqmt9'},
-    {nom:'Fløibanen + forêt de trolls', fam:'telepherique', match:'Fløibanen', statut:'retenu', lat:60.39643, lon:5.32857, gmap:'https://maps.app.goo.gl/E6cC896BmukrrXco7'},
-    {nom:'Musée VilVite (Bergen)', fam:'famille', match:'VilVite', statut:'etude', lat:60.38164, lon:5.32966, gmap:'https://maps.app.goo.gl/6ZeG6sBJTLkpz7MHA'},
+    {nom:'Akvariet (aquarium, Bergen)', fam:'activite', match:'Akvariet', statut:'etude', lat:60.39969, lon:5.30337, gmap:'https://maps.app.goo.gl/oR5JYoj9wezytqmt9'},
+    {nom:'Fløibanen + forêt de trolls', fam:'activite', match:'Fløibanen', statut:'retenu', lat:60.39643, lon:5.32857, gmap:'https://maps.app.goo.gl/E6cC896BmukrrXco7'},
+    {nom:'Musée VilVite (Bergen)', fam:'musee', match:'VilVite', statut:'etude', lat:60.38164, lon:5.32966, gmap:'https://maps.app.goo.gl/6ZeG6sBJTLkpz7MHA'},
     {nom:'Borgund stavkirke (XIIe s.)', fam:'musee', match:'Borgund', statut:'passage', lat:61.04732, lon:7.81246, gmap:'https://maps.app.goo.gl/BzGMWstLao2DbUTx9'},
     {nom:'Bateau Nærøyfjord (Flåm→Gudvangen)', fam:'bateau', match:'Bateau Nærøyfjord', statut:'retenu', lat:60.86285, lon:7.11511, gmap:'https://maps.app.goo.gl/H41ShgPzgcGHtj8k6'},
     {nom:'Village viking Njardarheimr (Gudvangen)', fam:'village', match:'Njardarheimr', statut:'retenu', lat:60.87900, lon:6.84264, gmap:'https://maps.app.goo.gl/VfGmFZ7VPtigdK4VA'},
-    {nom:'Train Flåmsbana (gare de Flåm)', fam:'famille', match:'Flåmsbana', statut:'etude', lat:60.86301, lon:7.11381, gmap:'https://maps.app.goo.gl/eeyhoJ4k8VdAhjF7A'},
+    {nom:'Train Flåmsbana (gare de Flåm)', fam:'activite', match:'Flåmsbana', statut:'etude', lat:60.86301, lon:7.11381, gmap:'https://maps.app.goo.gl/eeyhoJ4k8VdAhjF7A'},
     {nom:'Stegastein — belvédère (Aurlandsfjellet)', fam:'vue', match:'Aurlandsfjellet', statut:'retenu', lat:60.90864, lon:7.21211, gmap:'https://maps.app.goo.gl/pjwW7K15epeuUH5z9'},
-    {nom:'Glacier Bøyabreen — belvédère (Fjærland)', fam:'glacier', match:'Boyabreen', statut:'retenu', lat:61.48491, lon:6.75450, gmap:'https://maps.app.goo.gl/L5PcpSPdQa8hfGh27'},
-    {nom:'Lac glaciaire de Briksdal', fam:'glacier', match:'Lac glaciaire de Briksdal', statut:'retenu', lat:61.66424, lon:6.85909, gmap:'https://maps.app.goo.gl/kQLRiiyq9qT3r6vD6'},
-    {nom:'Lac Bondhusvatnet (Folgefonna)', fam:'glacier', match:'Bondhusvatnet', statut:'etude', lat:60.11041, lon:6.27004, gmap:'https://maps.app.goo.gl/jCh4juf9jtoG1oN99', note:'Parking · +100 m D+ · 20-30 min jusqu\'au lac'},
+    {nom:'Glacier Bøyabreen — belvédère (Fjærland)', fam:'vue', match:'Boyabreen', statut:'retenu', lat:61.48491, lon:6.75450, gmap:'https://maps.app.goo.gl/L5PcpSPdQa8hfGh27'},
+    {nom:'Lac glaciaire de Briksdal', fam:'vue', match:'Lac glaciaire de Briksdal', statut:'retenu', lat:61.66424, lon:6.85909, gmap:'https://maps.app.goo.gl/kQLRiiyq9qT3r6vD6'},
+    {nom:'Lac Bondhusvatnet (Folgefonna)', fam:'vue', match:'Bondhusvatnet', statut:'etude', lat:60.11041, lon:6.27004, gmap:'https://maps.app.goo.gl/jCh4juf9jtoG1oN99', note:'Parking · +100 m D+ · 20-30 min jusqu\'au lac'},
     {nom:'Solvorn — village (Lustrafjord)', fam:'village', match:'Solvorn', statut:'passage', lat:61.30094, lon:7.24549, gmap:'https://maps.app.goo.gl/pEG4sobdtG4z7qJNA'},
     {nom:'Lac Oldevatnet (turquoise)', fam:'vue', match:'Oldevatnet', statut:'passage', lat:61.78121, lon:6.82374, gmap:'https://maps.app.goo.gl/GiZhvPjvU9FZ5Dic8'},
     {nom:'Hjelle (vallée de Stryn)', fam:'vue', match:'Hjelle', statut:'passage', lat:61.91474, lon:7.11368, gmap:'https://maps.app.goo.gl/REyV6YfsLMMVGEJ26'},
-    {nom:'Loen Skylift', fam:'telepherique', match:'Loen Skylift', statut:'retenu', lat:61.87480, lon:6.83909, gmap:'https://maps.app.goo.gl/KuPQnngvT7xeqhUTA'},
+    {nom:'Loen Skylift', fam:'activite', match:'Loen Skylift', statut:'retenu', lat:61.87480, lon:6.83909, gmap:'https://maps.app.goo.gl/KuPQnngvT7xeqhUTA'},
     {nom:'Ferry Geiranger → Hellesylt', fam:'bateau', match:'Ferry Geiranger', statut:'retenu', lat:62.10268, lon:7.20507, gmap:'https://maps.app.goo.gl/n9urYoZ5wYGeA4Y38'},
     {nom:'Village de Geiranger', fam:'village', match:'village de Geiranger', statut:'retenu', lat:62.10084, lon:7.20589, gmap:'https://maps.app.goo.gl/wjeBd4PfB6ZRviDR6'},
     {nom:'Norsk Fjordsenter (musée Geirangerfjord)', fam:'musee', match:'Fjordsenter', statut:'retenu', lat:62.09559, lon:7.20992, gmap:'https://maps.app.goo.gl/tLGR6RCcBFurTiyi6'},
@@ -1047,18 +1063,50 @@ try{(function(){
     {nom:'Parc de sculptures Vigeland (Oslo)', fam:'musee', match:'Vigeland', statut:'avoir', lat:59.92703, lon:10.70087, gmap:'https://maps.app.goo.gl/MKzPyHhg6vL1PX997'},
     {nom:"Opéra d'Oslo — toit accessible", fam:'musee', match:"Opéra d'Oslo", statut:'avoir', lat:59.90749, lon:10.75313, gmap:'https://maps.app.goo.gl/vyDDHEuYKawTHEiX6'},
     {nom:"Jardin botanique d'Oslo (Tøyen)", fam:'musee', match:'botanique', statut:'avoir', lat:59.91733, lon:10.77023, gmap:'https://maps.app.goo.gl/CExLXkx3qZfnfr5t9'},
-    {nom:'Høyt & Lavt — accrobranche (Nesttun, Bergen)', fam:'sensation', match:'Høyt & Lavt', statut:'retenu', lat:60.29901, lon:5.37774, gmap:'https://maps.app.goo.gl/MMsMiRax7fZgShfF8'}
+    {nom:'Høyt & Lavt — accrobranche (Nesttun, Bergen)', fam:'activite', match:'Høyt & Lavt', statut:'retenu', lat:60.29901, lon:5.37774, gmap:'https://maps.app.goo.gl/MMsMiRax7fZgShfF8'}
   ];
   POINTS.forEach(pt=>{
-    const color=STATUT_COLOR[pt.statut]||'#2a6f97';
     const fam=pt.fam||familyOf(pt.type,pt.nom);
     const act=pt.match?findAct(pt.match):null;
+    const statut=(act&&act.statut)?act.statut:pt.statut;
+    const color=STATUT_COLOR[statut]||'#2a6f97';
     const noteHtml=pt.note?'<br><span style="color:#555;font-size:12px">'+pt.note+'</span>':'';
     const flagHtml=pt.flag?'<br><span style="color:#b8762a;font-size:12px">\u26a0\ufe0f position à confirmer</span>':'';
-    L.marker([pt.lat,pt.lon],{icon:roundIcon(fam,color)}).addTo(map2)
+    L.marker([pt.lat,pt.lon],{icon:roundIcon(fam,color)}).addTo(LG[catOf(fam)])
       .bindPopup('<div style="min-width:175px"><b>'+pt.nom+'</b>'+noteHtml+flagHtml+actions(pt.lat,pt.lon,act,pt.gmap)+'</div>');
     bounds.push([pt.lat,pt.lon]);
   });
+
+  // ── Trajet aller : étapes-nuits (van) + Gardanne + route OSRM + ferry ──
+  function decodePoly2(str){let idx=0,lat=0,lng=0,co=[];while(idx<str.length){let b,sh=0,res=0;do{b=str.charCodeAt(idx++)-63;res|=(b&0x1f)<<sh;sh+=5;}while(b>=0x20);lat+=(res&1)?~(res>>1):(res>>1);sh=0;res=0;do{b=str.charCodeAt(idx++)-63;res|=(b&0x1f)<<sh;sh+=5;}while(b>=0x20);lng+=(res&1)?~(res>>1):(res>>1);co.push([lat/1e5,lng/1e5]);}return co;}
+  const aller=PARCOURS.filter(pp=>['depart','transit','ferry'].includes(pp.type));
+  const allerFallback=L.polyline(aller.map(pp=>pp.coords),{color:'#2a6f97',weight:2.5,dashArray:'6,8',opacity:.6}).addTo(LG.aller);
+  aller.forEach(pp=>{
+    if(pp.type==='depart'){
+      L.marker(pp.coords,{icon:L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],html:'<div style="width:26px;height:26px;border-radius:50%;background:#2a6f97;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;font-size:13px">🏁</div>'})}).addTo(LG.aller).bindPopup('<b>'+pp.nom+'</b>');
+    } else {
+      L.marker(pp.coords,{icon:roundIcon('van','#2a6f97')}).addTo(LG.aller).bindPopup('<div style="min-width:170px"><b>'+pp.nom+'</b>'+(pp.trajet?'<br><span style="color:#5b6b73;font-size:12px">🚗 '+pp.trajet+'</span>':'')+'</div>');
+    }
+    bounds.push(pp.coords);
+  });
+  const ferry2=PARCOURS.find(pp=>pp.type==='ferry'),kris2=PARCOURS.find(pp=>pp.nom.indexOf('Kristiansand')>=0);
+  if(ferry2&&kris2){
+    L.polyline([ferry2.coords,kris2.coords],{color:'#61a5c2',weight:2.5,dashArray:'4,8',opacity:.9}).addTo(LG.aller);
+    L.marker([(ferry2.coords[0]+kris2.coords[0])/2,(ferry2.coords[1]+kris2.coords[1])/2],{icon:L.divIcon({className:'',iconSize:[24,24],iconAnchor:[12,12],html:'<div style="font-size:17px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))">⛴️</div>'})}).addTo(LG.aller).bindPopup('<b>Ferry Hirtshals → Kristiansand</b><br>2h30 · Fjord Line / Color Line');
+  }
+  const allerWp=aller.map(pp=>pp.coords[1]+','+pp.coords[0]).join(';');
+  fetch('https://router.project-osrm.org/route/v1/driving/'+allerWp+'?overview=full&geometries=polyline').then(r=>r.json()).then(d=>{if(d.code!=='Ok')return;LG.aller.removeLayer(allerFallback);L.polyline(decodePoly2(d.routes[0].geometry),{color:'#1B4F72',weight:3,opacity:.85}).addTo(LG.aller);}).catch(()=>{});
+
+  // ── Filtres cliquables (légende) ──
+  document.querySelectorAll('#map2-filters .filt').forEach(el=>{
+    el.addEventListener('click',()=>{const f=el.dataset.f;const off=el.classList.toggle('off');if(off)map2.removeLayer(LG[f]);else LG[f].addTo(map2);});
+  });
+
+  // ── 📍 sur les fiches (bloc texte) ──
+  const cardLink={};
+  POINTS.forEach(pt=>{const a=pt.match?findAct(pt.match):null;if(a)cardLink[slug(a.nom)]=pt.gmap||gnav(pt.lat,pt.lon);});
+  RANDO_GPX.forEach(r=>{const a=findAct(r.m);if(a)cardLink[slug(a.nom)]=gnav(r.p[0],r.p[1]);});
+  Object.keys(cardLink).forEach(sl=>{const el=document.getElementById('act-'+sl);if(!el||el.querySelector('.card-map'))return;const a=document.createElement('a');a.href=cardLink[sl];a.target='_blank';a.rel='noopener';a.className='card-map';a.title='Voir sur Google Maps';a.textContent='📍';a.style.cssText='position:absolute;top:8px;right:10px;text-decoration:none;font-size:15px;line-height:1';if(getComputedStyle(el).position==='static')el.style.position='relative';el.appendChild(a);});
 
   if(bounds.length){ try{ map2.fitBounds(bounds,{padding:[35,35]}); }catch(e){} }
   if('IntersectionObserver' in window){
